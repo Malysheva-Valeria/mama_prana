@@ -1,0 +1,86 @@
+---
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { useContent } from '@/i18n/utils';
+
+const { t } = useContent(Astro.currentLocale);
+
+const links = [
+  { href: '#philosophy', label: t.nav.philosophy },
+  { href: '#practices', label: t.nav.practices },
+  { href: '#space', label: t.nav.space },
+  { href: '#schedule', label: t.nav.schedule },
+  { href: '#contact', label: t.nav.contact },
+];
+---
+
+<header class="header" data-theme="blue">
+  <div class="container header__inner">
+    <a class="header__brand" href="#top">mama prana</a>
+
+    <nav class="header__nav" aria-label={t.nav.practices}>
+      {
+        links.map((link) => (
+          <a class="header__link" href={link.href}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <LanguageSwitcher />
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--c-blue) 88%, transparent);
+    color: var(--c-cream);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    min-height: 4.5rem;
+  }
+
+  .header__brand {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .header__nav {
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.5rem);
+  }
+
+  .header__link {
+    font-family: var(--font-label);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    text-decoration: none;
+    color: var(--fg-soft);
+    transition: color var(--dur-med) var(--ease-out);
+  }
+
+  .header__link:hover {
+    color: var(--fg);
+  }
+
+  /* На вузьких екранах ховаємо якірну навігацію: сторінка коротка,
+     скрол сам по собі є навігацією. Бренд і мова лишаються. */
+  @media (max-width: 52rem) {
+    .header__nav {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+/**
+ * Обгортка секції: задає тему (кольори), вертикальні відступи
+ * та контейнер. Уся сторінка складається з цих блоків.
+ */
+interface Props {
+  id?: string;
+  theme?: 'cream' | 'blue' | 'terracotta';
+  /** Прибрати контейнер — для секцій на всю ширину (галерея, hero) */
+  bleed?: boolean;
+  class?: string;
+  labelledby?: string;
+}
+
+const { id, theme = 'cream', bleed = false, class: className, labelledby } = Astro.props;
+---
+
+<section
+  id={id}
+  data-theme={theme}
+  aria-labelledby={labelledby}
+  class:list={['section', className]}
+>
+  {
+    bleed ? (
+      <slot />
+    ) : (
+      <div class="container">
+        <slot />
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .section {
+    background: var(--bg);
+    color: var(--fg);
+    padding-block: var(--space-xl);
+  }
+</style>

@@ -1,0 +1,70 @@
+---
+import Section from './Section.astro';
+import { useContent } from '@/i18n/utils';
+
+const { t } = useContent(Astro.currentLocale);
+---
+
+<Section id="contact" theme="terracotta" labelledby="contact-title">
+  <div class="cta reveal">
+    <p class="eyebrow">{t.cta.eyebrow}</p>
+    <h2 id="contact-title" class="cta__title">{t.cta.title}</h2>
+    <p class="cta__body">{t.cta.body}</p>
+
+    <div class="cta__actions">
+      <a class="button" href={t.cta.primaryHref} target="_blank" rel="noopener noreferrer">
+        {t.cta.primaryLabel}
+      </a>
+      <a
+        class="cta__secondary"
+        href={t.cta.secondaryHref}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {t.cta.secondaryLabel}
+      </a>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    text-align: center;
+    padding-block: var(--space-lg);
+  }
+
+  .cta__title {
+    font-size: var(--step-4);
+  }
+
+  .cta__body {
+    max-width: 46ch;
+    color: var(--fg-soft);
+  }
+
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-sm);
+  }
+
+  .cta__secondary {
+    font-family: var(--font-label);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--fg-soft);
+    transition: color var(--dur-med) var(--ease-out);
+  }
+
+  .cta__secondary:hover {
+    color: var(--fg);
+  }
+</style>

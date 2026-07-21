@@ -1,0 +1,137 @@
+---
+import Logo from './Logo.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { useContent } from '@/i18n/utils';
+
+const { t } = useContent(Astro.currentLocale);
+
+// Обчислюється під час збірки — у статиці рік «застигне» до наступного білду.
+const year = new Date().getFullYear();
+
+const navLinks = [
+  { href: '#philosophy', label: t.nav.philosophy },
+  { href: '#practices', label: t.nav.practices },
+  { href: '#space', label: t.nav.space },
+  { href: '#schedule', label: t.nav.schedule },
+  { href: '#contact', label: t.nav.contact },
+];
+---
+
+<footer class="footer" data-theme="blue">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <Logo size="3.5rem" />
+      <p class="footer__tagline">{t.footer.tagline}</p>
+    </div>
+
+    <nav class="footer__col" aria-label={t.footer.navTitle}>
+      <h2 class="eyebrow">{t.footer.navTitle}</h2>
+      <ul role="list">
+        {
+          navLinks.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="footer__col">
+      <h2 class="eyebrow">{t.footer.contactTitle}</h2>
+      <ul role="list">
+        <li>{t.footer.address}</li>
+        <li><a href={`mailto:${t.footer.email}`}>{t.footer.email}</a></li>
+        <li><a href={`tel:${t.footer.phone.replace(/\s/g, '')}`}>{t.footer.phone}</a></li>
+        {
+          t.footer.social.map((s) => (
+            <li>
+              <a href={s.href} target="_blank" rel="noopener noreferrer">
+                {s.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="container footer__bottom">
+    <p>© {year} mama prana. {t.footer.rights}.</p>
+    <a href="https://mamaprana.com.ua">mamaprana.com.ua</a>
+    <LanguageSwitcher />
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--c-blue-deep);
+    color: var(--c-cream);
+    --fg: var(--c-cream);
+    --fg-soft: color-mix(in srgb, var(--c-cream) 65%, transparent);
+    --rule: color-mix(in srgb, var(--c-cream) 20%, transparent);
+    padding-block: var(--space-xl) var(--space-md);
+  }
+
+  .footer__inner {
+    display: grid;
+    gap: var(--space-lg);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .footer__brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .footer__tagline {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-style: italic;
+    color: var(--fg-soft);
+  }
+
+  .footer__col ul {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    color: var(--fg-soft);
+  }
+
+  .footer__col a {
+    text-decoration: none;
+    transition: color var(--dur-med) var(--ease-out);
+  }
+
+  .footer__col a:hover {
+    color: var(--fg);
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    font-family: var(--font-label);
+    font-size: var(--step--1);
+    color: var(--fg-soft);
+  }
+
+  .footer__bottom a {
+    text-decoration: none;
+  }
+
+  @media (min-width: 52rem) {
+    .footer__inner {
+      grid-template-columns: 1.4fr 0.8fr 0.8fr;
+    }
+  }
+</style>

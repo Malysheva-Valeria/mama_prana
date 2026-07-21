@@ -1,0 +1,54 @@
+---
+import Photo from './Photo.astro';
+import Section from './Section.astro';
+import { useContent } from '@/i18n/utils';
+
+const { t } = useContent(Astro.currentLocale);
+---
+
+<Section id="space" theme="cream" labelledby="space-title">
+  <header class="gallery__header reveal">
+    <p class="eyebrow">{t.gallery.eyebrow}</p>
+    <h2 id="space-title" class="gallery__title">{t.gallery.title}</h2>
+  </header>
+
+  <div class="gallery reveal">
+    {
+      t.gallery.captions.map((caption, index) => (
+        <Photo
+          caption={caption}
+          ratio={index % 3 === 0 ? '4 / 5' : '1 / 1'}
+          tone={((index % 3) + 1) as 1 | 2 | 3}
+          class="gallery__item"
+        />
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .gallery__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+  }
+
+  .gallery__title {
+    font-size: var(--step-3);
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+    gap: var(--space-md);
+    align-items: start;
+  }
+
+  /* Легкий вертикальний зсув — стрічка «дихає», а не марширує рівним рядом */
+  @media (min-width: 52rem) {
+    .gallery :global(.gallery__item:nth-child(even)) {
+      margin-top: var(--space-lg);
+    }
+  }
+</style>

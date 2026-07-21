@@ -1,0 +1,85 @@
+---
+import Section from './Section.astro';
+import { useContent } from '@/i18n/utils';
+
+const { t } = useContent(Astro.currentLocale);
+---
+
+<Section id="schedule" theme="blue" labelledby="schedule-title">
+  <header class="schedule__header reveal">
+    <p class="eyebrow">{t.schedule.eyebrow}</p>
+    <h2 id="schedule-title" class="schedule__title">{t.schedule.title}</h2>
+  </header>
+
+  <ul class="schedule reveal" role="list">
+    {
+      t.schedule.cards.map((card) => (
+        <li class="card">
+          <h3 class="card__name">{card.name}</h3>
+          <p class="card__meta">
+            <span>{card.duration}</span>
+            <span aria-hidden="true">·</span>
+            <span>{card.level}</span>
+          </p>
+          <p class="card__description">{card.description}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="schedule__note reveal">{t.schedule.note}</p>
+</Section>
+
+<style>
+  .schedule__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+  }
+
+  .schedule__title {
+    font-size: var(--step-3);
+  }
+
+  .schedule {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+    gap: 0;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-md) var(--space-md) var(--space-lg) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .card__name {
+    font-size: var(--step-2);
+  }
+
+  .card__meta {
+    display: flex;
+    gap: 0.5em;
+    font-family: var(--font-label);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+  }
+
+  .card__description {
+    color: var(--fg-soft);
+  }
+
+  .schedule__note {
+    margin-top: var(--space-lg);
+    font-style: italic;
+    color: var(--fg-soft);
+  }
+</style>

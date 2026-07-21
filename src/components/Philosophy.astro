@@ -1,0 +1,49 @@
+---
+import Photo from './Photo.astro';
+import Section from './Section.astro';
+import { useContent } from '@/i18n/utils';
+
+const { t } = useContent(Astro.currentLocale);
+---
+
+<Section id="philosophy" theme="cream" labelledby="philosophy-title">
+  <div class="philosophy reveal">
+    <div class="philosophy__text">
+      <p class="eyebrow">{t.philosophy.eyebrow}</p>
+      <h2 id="philosophy-title" class="philosophy__statement">{t.philosophy.statement}</h2>
+      {t.philosophy.body.map((paragraph) => <p class="philosophy__body">{paragraph}</p>)}
+    </div>
+
+    <Photo caption={t.philosophy.imageCaption} ratio="3 / 4" tone={2} class="philosophy__photo" />
+  </div>
+</Section>
+
+<style>
+  .philosophy {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .philosophy__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .philosophy__statement {
+    font-size: var(--step-3);
+    max-width: 18ch;
+  }
+
+  .philosophy__body {
+    color: var(--fg-soft);
+  }
+
+  @media (min-width: 52rem) {
+    .philosophy {
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: var(--space-xl);
+    }
+  }
+</style>

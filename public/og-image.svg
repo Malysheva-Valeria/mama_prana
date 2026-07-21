@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#1E3A5F"/>
+  <g transform="translate(600 250)" stroke="#EAE4D8" stroke-width="3" fill="none" stroke-linecap="round">
+    <rect x="-70" y="-70" width="140" height="140"/>
+    <line x1="-45" y1="25" x2="45" y2="25"/>
+    <path d="M -24 25 A 24 24 0 0 1 24 25"/>
+    <line x1="0" y1="-8" x2="0" y2="-18"/>
+    <line x1="-28" y1="2" x2="-36" y2="-6"/>
+    <line x1="28" y1="2" x2="36" y2="-6"/>
+    <line x1="-32" y1="25" x2="-42" y2="25"/>
+    <line x1="32" y1="25" x2="42" y2="25"/>
+  </g>
+  <text x="600" y="430" fill="#EAE4D8" font-family="Georgia, 'Times New Roman', serif" font-size="76" text-anchor="middle">mama prana</text>
+  <text x="600" y="490" fill="#8FA6BB" font-family="Helvetica, Arial, sans-serif" font-size="24" letter-spacing="12" text-anchor="middle">YOGA STUDIO</text>
+</svg>

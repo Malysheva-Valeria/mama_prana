@@ -1,0 +1,88 @@
+---
+import Logo from './Logo.astro';
+import { useContent } from '@/i18n/utils';
+
+const { t } = useContent(Astro.currentLocale);
+---
+
+<section id="top" class="hero" data-theme="blue">
+  <div class="container hero__inner">
+    <p class="eyebrow hero__eyebrow">{t.hero.eyebrow}</p>
+
+    <Logo size="clamp(5rem, 12vw, 8.5rem)" withWordmark />
+
+    <h1 class="hero__mantra">{t.hero.mantra}</h1>
+  </div>
+
+  <a class="hero__scroll" href="#philosophy">
+    <span class="eyebrow">{t.hero.scrollHint}</span>
+    <span class="hero__scroll-line" aria-hidden="true"></span>
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 100svh;
+    background: var(--bg);
+    color: var(--fg);
+    text-align: center;
+  }
+
+  .hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .hero__eyebrow {
+    color: var(--c-muted-blue);
+  }
+
+  .hero__mantra {
+    font-size: var(--step-2);
+    font-style: italic;
+    max-width: 20ch;
+    color: var(--fg-soft);
+  }
+
+  .hero__scroll {
+    position: absolute;
+    bottom: var(--space-lg);
+    left: 50%;
+    translate: -50% 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: var(--c-muted-blue);
+  }
+
+  .hero__scroll-line {
+    display: block;
+    width: 1px;
+    height: 3rem;
+    background: currentColor;
+    transform-origin: top;
+    animation: draw 2.4s var(--ease-out) infinite;
+  }
+
+  @keyframes draw {
+    0% {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+    45% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scaleY(1);
+      opacity: 0;
+    }
+  }
+</style>

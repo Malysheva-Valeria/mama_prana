@@ -1,0 +1,56 @@
+---
+/**
+ * Місце під фотографію.
+ *
+ * Поки реальних знімків немає, малюємо делікатний плейсхолдер у кольорах бренду.
+ * Коли з'являться фото: покласти файли в `src/assets/`, імпортувати та
+ * замінити <div class="photo__placeholder"> на <Image> з `astro:assets`
+ * (він сам зробить webp/avif, розміри та lazy-loading).
+ */
+interface Props {
+  caption?: string;
+  /** CSS aspect-ratio, напр. '3 / 4' */
+  ratio?: string;
+  /** Варіант заливки плейсхолдера — щоб сусідні фото не були однакові */
+  tone?: 1 | 2 | 3;
+  class?: string;
+}
+
+const { caption, ratio = '3 / 4', tone = 1, class: className } = Astro.props;
+---
+
+<figure class:list={['photo', className]} style={`--ratio: ${ratio}`}>
+  <div class="photo__placeholder" data-tone={tone} aria-hidden="true"></div>
+  {caption && <figcaption class="eyebrow">{caption}</figcaption>}
+</figure>
+
+<style>
+  .photo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .photo__placeholder {
+    aspect-ratio: var(--ratio);
+    width: 100%;
+    background:
+      linear-gradient(135deg, transparent 48%, var(--rule) 49%, var(--rule) 51%, transparent 52%),
+      var(--fill);
+    background-size:
+      2.5rem 2.5rem,
+      cover;
+  }
+
+  .photo__placeholder[data-tone='1'] {
+    --fill: color-mix(in srgb, var(--c-muted-blue) 45%, var(--bg));
+  }
+
+  .photo__placeholder[data-tone='2'] {
+    --fill: color-mix(in srgb, var(--c-blue) 22%, var(--bg));
+  }
+
+  .photo__placeholder[data-tone='3'] {
+    --fill: color-mix(in srgb, var(--c-terracotta) 20%, var(--bg));
+  }
+</style>

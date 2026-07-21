@@ -1,0 +1,76 @@
+---
+import { languages, type Lang } from '@/i18n/content';
+import { localizePath, useContent } from '@/i18n/utils';
+import '@/styles/global.css';
+
+const { lang, t } = useContent(Astro.currentLocale);
+
+const canonical = new URL(localizePath('/', lang), Astro.site);
+const ogImage = new URL('/og-image.svg', Astro.site);
+
+/** hreflang для кожної мови + x-default на українську */
+const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
+  hreflang: l,
+  href: new URL(localizePath('/', l), Astro.site).href,
+}));
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical.href} />
+
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site).href} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImage.href} />
+    <meta property="og:image:alt" content={t.meta.ogAlt} />
+    <meta property="og:locale" content={lang === 'uk' ? 'uk_UA' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#1e3a5f" />
+
+    <!-- Позначаємо, що JS увімкнено, ДО першого рендеру: інакше блоки .reveal
+         встигнуть блимнути видимими перед тим, як їх приховає CSS. -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">{t.a11y.skipToContent}</a>
+    <slot />
+
+    <script>
+      // Делікатна поява секцій при скролі.
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const targets = document.querySelectorAll<HTMLElement>('.reveal');
+
+      if (reduced || !('IntersectionObserver' in window)) {
+        targets.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target); // з'являємось один раз
+            }
+          },
+          { rootMargin: '0px 0px -12% 0px', threshold: 0.1 },
+        );
+
+        targets.forEach((el) => observer.observe(el));
+      }
+    </script>
+  </body>
+</html>

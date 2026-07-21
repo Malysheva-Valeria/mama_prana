@@ -1,0 +1,58 @@
+---
+import { languages, languageShort } from '@/i18n/content';
+import { interpolate, localizePath, otherLangs, useContent } from '@/i18n/utils';
+
+const { lang, t } = useContent(Astro.currentLocale);
+const others = otherLangs(lang);
+---
+
+<nav class="lang" aria-label={t.a11y.languageSwitcher}>
+  <span class="lang__current" aria-current="true">{languageShort[lang]}</span>
+  {
+    others.map((l) => (
+      <>
+        <span class="lang__sep" aria-hidden="true">
+          /
+        </span>
+        <a
+          class="lang__link"
+          href={localizePath('/', l)}
+          hreflang={l}
+          lang={l}
+          title={interpolate(t.a11y.switchTo, { lang: languages[l] })}
+        >
+          {languageShort[l]}
+        </a>
+      </>
+    ))
+  }
+</nav>
+
+<style>
+  .lang {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--font-label);
+    font-size: var(--step--1);
+    letter-spacing: 0.16em;
+  }
+
+  .lang__current {
+    color: var(--fg);
+  }
+
+  .lang__sep,
+  .lang__link {
+    color: var(--fg-soft);
+  }
+
+  .lang__link {
+    text-decoration: none;
+    transition: color var(--dur-med) var(--ease-out);
+  }
+
+  .lang__link:hover {
+    color: var(--fg);
+  }
+</style>

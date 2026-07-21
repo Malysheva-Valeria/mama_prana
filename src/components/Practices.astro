@@ -1,0 +1,86 @@
+---
+import Photo from './Photo.astro';
+import Section from './Section.astro';
+import { useContent } from '@/i18n/utils';
+
+const { t } = useContent(Astro.currentLocale);
+
+/** Серце сторінки: три смуги з чергуванням кольорів, як у презентації */
+const themes = ['blue', 'terracotta', 'cream'] as const;
+---
+
+<div id="practices">
+  {
+    t.practices.items.map((item, index) => {
+      const theme = themes[index % themes.length] ?? 'cream';
+      const titleId = `practice-${item.id}`;
+      return (
+        <Section id={item.id} theme={theme} labelledby={titleId}>
+          <article class="practice reveal" data-flip={index % 2 === 1}>
+            <div class="practice__text">
+              <p class="eyebrow">
+                {t.practices.eyebrow}
+                <span class="practice__index">{`0${index + 1}`}</span>
+              </p>
+              <h2 id={titleId} class="practice__name">
+                {item.name}
+              </h2>
+              <p class="practice__tagline">{item.tagline}</p>
+              <p class="practice__description">{item.description}</p>
+            </div>
+
+            <Photo ratio="4 / 5" tone={((index % 3) + 1) as 1 | 2 | 3} class="practice__photo" />
+          </article>
+        </Section>
+      );
+    })
+  }
+</div>
+
+<style>
+  .practice {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .practice__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .practice__index::before {
+    content: '—';
+    margin-inline: 0.6em;
+    opacity: 0.6;
+  }
+
+  .practice__name {
+    font-size: var(--step-4);
+    line-height: 0.95;
+  }
+
+  .practice__tagline {
+    font-style: italic;
+    font-size: var(--step-1);
+    color: var(--accent);
+  }
+
+  .practice__description {
+    margin-top: var(--space-sm);
+    color: var(--fg-soft);
+  }
+
+  @media (min-width: 52rem) {
+    .practice {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+    }
+
+    /* Кожен другий блок дзеркалимо, щоб стрічка не була монотонною */
+    .practice[data-flip='true'] .practice__text {
+      order: 2;
+    }
+  }
+</style>

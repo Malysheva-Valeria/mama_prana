@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mamaprana.com.ua/sitemap-index.xml
