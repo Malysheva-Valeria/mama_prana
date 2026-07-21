@@ -9,6 +9,13 @@ export default defineConfig([
   tseslint.configs.recommended,
   astro.configs.recommended,
   {
+    // Скрипти збірки виконуються в Node, а не в браузері
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: { fetch: 'readonly', Buffer: 'readonly', console: 'readonly', process: 'readonly' },
+    },
+  },
+  {
     rules: {
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-unused-vars': [

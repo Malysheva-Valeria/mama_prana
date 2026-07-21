@@ -13,15 +13,45 @@ interface Props {
   ratio?: string;
   /** Варіант заливки плейсхолдера — щоб сусідні фото не були однакові */
   tone?: 1 | 2 | 3;
+  /** Тип появи; `false` — без анімації */
+  anim?: 'fade' | 'rise' | false;
+  /** Порядковий номер для послідовної появи */
+  index?: number;
+  /** Повільний зум, поки фото проходить екраном */
+  kenBurns?: boolean;
   class?: string;
 }
 
-const { caption, ratio = '3 / 4', tone = 1, class: className } = Astro.props;
+const {
+  caption,
+  ratio = '3 / 4',
+  tone = 1,
+  anim = 'fade',
+  index = 0,
+  kenBurns = false,
+  class: className,
+} = Astro.props;
 ---
 
 <figure class:list={['photo', className]} style={`--ratio: ${ratio}`}>
-  <div class="photo__placeholder" data-tone={tone} aria-hidden="true"></div>
-  {caption && <figcaption class="eyebrow">{caption}</figcaption>}
+  <div class="photo__frame">
+    <div
+      class:list={['photo__placeholder', kenBurns && 'ken-burns']}
+      data-tone={tone}
+      data-anim={anim === false ? undefined : anim}
+      style={`--i: ${index}`}
+      aria-hidden="true"
+    >
+    </div>
+  </div>
+
+  {
+    caption && (
+      <figcaption class="eyebrow photo__caption" data-anim="rise" style={`--i: ${index + 1}`}>
+        {caption}
+      </figcaption>
+    )
+  }
 </figure>
 
 <style>
@@ -29,6 +59,11 @@ const { caption, ratio = '3 / 4', tone = 1, class: className } = Astro.props;
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
+  }
+
+  /* Рамка обрізає зум, щоб фото не «розпихало» сусідів */
+  .photo__frame {
+    overflow: hidden;
   }
 
   .photo__placeholder {
@@ -40,6 +75,11 @@ const { caption, ratio = '3 / 4', tone = 1, class: className } = Astro.props;
     background-size:
       2.5rem 2.5rem,
       cover;
+    transition: scale var(--dur-xslow) var(--ease-drift);
+  }
+
+  .photo:hover .photo__placeholder {
+    scale: 1.03;
   }
 
   .photo__placeholder[data-tone='1'] {
@@ -52,5 +92,15 @@ const { caption, ratio = '3 / 4', tone = 1, class: className } = Astro.props;
 
   .photo__placeholder[data-tone='3'] {
     --fill: color-mix(in srgb, var(--c-terracotta) 20%, var(--bg));
+  }
+
+  .photo__caption {
+    font-size: var(--step--1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .photo:hover .photo__placeholder {
+      scale: 1;
+    }
   }
 </style>

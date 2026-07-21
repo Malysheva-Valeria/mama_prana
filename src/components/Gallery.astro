@@ -7,20 +7,29 @@ const { t } = useContent(Astro.currentLocale);
 ---
 
 <Section id="space" theme="cream" labelledby="space-title">
-  <header class="gallery__header reveal">
-    <p class="eyebrow">{t.gallery.eyebrow}</p>
-    <h2 id="space-title" class="gallery__title">{t.gallery.title}</h2>
+  <header class="gallery__header">
+    <p class="eyebrow" data-anim="rise" style="--i: 0">{t.gallery.eyebrow}</p>
+    <h2 id="space-title" class="gallery__title">
+      <span class="line" data-anim="mask" style="--i: 1"><span>{t.gallery.title}</span></span>
+    </h2>
   </header>
 
-  <div class="gallery reveal">
+  <div class="gallery">
     {
       t.gallery.captions.map((caption, index) => (
-        <Photo
-          caption={caption}
-          ratio={index % 3 === 0 ? '4 / 5' : '1 / 1'}
-          tone={((index % 3) + 1) as 1 | 2 | 3}
-          class="gallery__item"
-        />
+        <div
+          class="gallery__cell parallax"
+          style={`--parallax-from: ${index % 2 ? '4.5rem' : '1.5rem'}; --parallax-to: ${index % 2 ? '-4.5rem' : '-1.5rem'}`}
+        >
+          <Photo
+            caption={caption}
+            ratio={index % 3 === 0 ? '4 / 5' : '1 / 1'}
+            tone={((index % 3) + 1) as 1 | 2 | 3}
+            anim="fade"
+            index={index % 3}
+            kenBurns
+          />
+        </div>
       ))
     }
   </div>
@@ -31,11 +40,21 @@ const { t } = useContent(Astro.currentLocale);
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-xl);
   }
 
   .gallery__title {
     font-size: var(--step-3);
+    font-weight: 300;
+  }
+
+  .line {
+    display: block;
+    overflow: hidden;
+  }
+
+  .line > span {
+    display: block;
   }
 
   .gallery {
@@ -47,8 +66,12 @@ const { t } = useContent(Astro.currentLocale);
 
   /* Легкий вертикальний зсув — стрічка «дихає», а не марширує рівним рядом */
   @media (min-width: 52rem) {
-    .gallery :global(.gallery__item:nth-child(even)) {
+    .gallery__cell:nth-child(even) {
       margin-top: var(--space-lg);
+    }
+
+    .gallery__cell:nth-child(3n) {
+      margin-top: calc(var(--space-lg) * 1.6);
     }
   }
 </style>

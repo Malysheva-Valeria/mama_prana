@@ -1,0 +1,227 @@
+/**
+ * Система руху.
+ *
+ * Правила гри:
+ * 1. Без JS усе видно одразу — рух це покращення, а не умова видимості.
+ *    Стани спрацьовують лише під `.js`.
+ * 2. Появи вмикає IntersectionObserver, додаючи `.is-visible`.
+ * 3. Послідовність (stagger) задається змінною `--i` на дочірньому елементі.
+ * 4. Паралакс і scroll-linked ефекти — на `animation-timeline`, тобто
+ *    в компоziторі й без жодного JS. Де не підтримується — просто статика.
+ * 5. `prefers-reduced-motion` вимикає все разом.
+ */
+
+/* ---------- Базові появи ---------- */
+
+.js [data-anim] {
+  --anim-delay: calc(var(--i, 0) * var(--stagger));
+  opacity: 0;
+  transition:
+    opacity var(--dur-xslow) var(--ease-drift) var(--anim-delay),
+    transform var(--dur-xslow) var(--ease-drift) var(--anim-delay),
+    letter-spacing var(--dur-xslow) var(--ease-drift) var(--anim-delay);
+  will-change: opacity, transform;
+}
+
+.js [data-anim].is-visible {
+  opacity: 1;
+  transform: none;
+  letter-spacing: inherit;
+}
+
+/* Підйом знизу — робоча конячка для абзаців і карток */
+.js [data-anim='rise'] {
+  transform: translateY(2.5rem);
+}
+
+/*
+ * Шторка: рядок виїжджає з-під невидимої маски.
+ *
+ * Спостерігач стежить саме за «вікном» (цим елементом), а не за текстом
+ * усередині. Це принципово: IntersectionObserver рахує площу ПІСЛЯ
+ * обрізання, тож елемент, схований власним overflow чи clip-path,
+ * має нульову площу перетину і не проявиться ніколи.
+ * Вікно ж лишається нормального розміру — і подія стабільно спрацьовує.
+ */
+.js [data-anim='mask'] {
+  display: block;
+  overflow: hidden;
+  opacity: 1; /* ховається вміст, а не вікно */
+}
+
+.js [data-anim='mask'] > * {
+  display: block;
+  transform: translateY(105%);
+  transition: transform var(--dur-xslow) var(--ease-drift) var(--anim-delay);
+  will-change: transform;
+}
+
+.js [data-anim='mask'].is-visible > * {
+  transform: none;
+}
+
+/* Розкриття літер — фірмовий прийом для словесного знаку */
+.js [data-anim='letters'] {
+  letter-spacing: 0.34em;
+  transform: translateY(0.6rem);
+}
+
+.js [data-anim='letters'].is-visible {
+  letter-spacing: 0.02em;
+}
+
+/* М'яке проявлення без зсуву — для фото, щоб не «стрибали» */
+.js [data-anim='fade'] {
+  transform: scale(1.04);
+}
+
+/* Лінія-промінь, що проростає від лівого краю */
+.js [data-anim='line'] {
+  opacity: 1;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.js [data-anim='line'].is-visible {
+  transform: scaleX(1);
+}
+
+/* ---------- Малюнок логотипа ---------- */
+
+/*
+ * Обводка «сходу сонця» промальовується штрихом.
+ * `pathLength=1` нормалізує довжину будь-якої лінії, тож одна
+ * анімація однаково працює і для дуги, і для променя.
+ */
+.js .logo--draw [data-draw] {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+
+.js .logo--draw.is-visible [data-draw] {
+  animation:
+    draw-stroke 1.4s var(--ease-drift) forwards,
+    draw-fade 0.3s linear forwards;
+  animation-delay: calc(var(--d, 0) * 90ms);
+}
+
+@keyframes draw-stroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes draw-fade {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- Scroll-linked ефекти ---------- */
+
+/*
+ * `animation-timeline: view()` прив'язує прогрес анімації до положення
+ * елемента у в'юпорті. Це нативний паралакс: без JS, без jank.
+ * Браузери без підтримки просто показують статичний кадр.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .parallax {
+      animation: parallax-drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+
+    @keyframes parallax-drift {
+      from {
+        translate: 0 var(--parallax-from, 4rem);
+      }
+      to {
+        translate: 0 var(--parallax-to, -4rem);
+      }
+    }
+
+    /* Повільний зум фото по мірі проходження екраном */
+    .ken-burns {
+      animation: ken-burns linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+
+    @keyframes ken-burns {
+      from {
+        scale: 1.12;
+      }
+      to {
+        scale: 1;
+      }
+    }
+
+    /* Hero розчиняється й трохи від'їжджає, поки його гортають */
+    .hero-fade {
+      animation: hero-fade linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 90%;
+    }
+
+    @keyframes hero-fade {
+      to {
+        opacity: 0;
+        translate: 0 -3rem;
+      }
+    }
+  }
+}
+
+/* ---------- Індикатор прокрутки ---------- */
+
+.scroll-cue {
+  animation: scroll-cue 2.6s var(--ease-drift) infinite;
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+    opacity: 0;
+  }
+  40% {
+    transform: scaleY(1);
+    transform-origin: top;
+    opacity: 1;
+  }
+  60% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+    opacity: 0;
+  }
+}
+
+/* ---------- Повага до налаштувань користувача ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-anim],
+  .js [data-anim].is-visible {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    letter-spacing: inherit;
+    transition: none;
+  }
+
+  .js .logo--draw [data-draw] {
+    stroke-dashoffset: 0;
+    opacity: 1;
+    animation: none;
+  }
+
+  .scroll-cue {
+    animation: none;
+  }
+}

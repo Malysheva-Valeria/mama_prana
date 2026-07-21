@@ -47,7 +47,30 @@ const links = [
     align-items: center;
     justify-content: space-between;
     gap: var(--space-md);
-    min-height: 4.5rem;
+    min-height: 5.5rem;
+    transition: min-height var(--dur-med) var(--ease-out);
+  }
+
+  /*
+   * Шапка ущільнюється на перших 300px прокрутки.
+   * `animation-timeline: scroll()` рахує це в компоziторі — жодного
+   * scroll-лістенера на головному потоці. Без підтримки лишається
+   * звичайна повнорозмірна шапка.
+   */
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .header__inner {
+        animation: header-shrink linear both;
+        animation-timeline: scroll(root block);
+        animation-range: 0 300px;
+      }
+
+      @keyframes header-shrink {
+        to {
+          min-height: 3.75rem;
+        }
+      }
+    }
   }
 
   .header__brand {

@@ -6,15 +6,20 @@ const { t } = useContent(Astro.currentLocale);
 ---
 
 <Section id="schedule" theme="blue" labelledby="schedule-title">
-  <header class="schedule__header reveal">
-    <p class="eyebrow">{t.schedule.eyebrow}</p>
-    <h2 id="schedule-title" class="schedule__title">{t.schedule.title}</h2>
+  <header class="schedule__header">
+    <p class="eyebrow" data-anim="rise" style="--i: 0">{t.schedule.eyebrow}</p>
+    <h2 id="schedule-title" class="schedule__title">
+      <span class="line" data-anim="mask" style="--i: 1"><span>{t.schedule.title}</span></span>
+    </h2>
   </header>
 
-  <ul class="schedule reveal" role="list">
+  <ul class="schedule" role="list">
     {
-      t.schedule.cards.map((card) => (
-        <li class="card">
+      t.schedule.cards.map((card, index) => (
+        <li class="card" data-anim="rise" style={`--i: ${index}`}>
+          <span class="card__number eyebrow" aria-hidden="true">
+            {`0${index + 1}`}
+          </span>
           <h3 class="card__name">{card.name}</h3>
           <p class="card__meta">
             <span>{card.duration}</span>
@@ -27,7 +32,7 @@ const { t } = useContent(Astro.currentLocale);
     }
   </ul>
 
-  <p class="schedule__note reveal">{t.schedule.note}</p>
+  <p class="schedule__note" data-anim="rise" style="--i: 4">{t.schedule.note}</p>
 </Section>
 
 <style>
@@ -35,11 +40,21 @@ const { t } = useContent(Astro.currentLocale);
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-xl);
   }
 
   .schedule__title {
     font-size: var(--step-3);
+    font-weight: 300;
+  }
+
+  .line {
+    display: block;
+    overflow: hidden;
+  }
+
+  .line > span {
+    display: block;
   }
 
   .schedule {
@@ -52,15 +67,42 @@ const { t } = useContent(Astro.currentLocale);
   }
 
   .card {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
     padding: var(--space-md) var(--space-md) var(--space-lg) 0;
     border-bottom: 1px solid var(--rule);
+    transition: background-color var(--dur-med) var(--ease-out);
+  }
+
+  /* Тонка лінія-промінь, що проростає під карткою при наведенні */
+  .card::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-slow) var(--ease-drift);
+  }
+
+  .card:hover::after {
+    transform: scaleX(1);
+  }
+
+  .card__number {
+    color: var(--fg-soft);
+    opacity: 0.5;
   }
 
   .card__name {
     font-size: var(--step-2);
+    font-weight: 300;
+    margin-top: var(--space-xs);
   }
 
   .card__meta {
@@ -74,12 +116,20 @@ const { t } = useContent(Astro.currentLocale);
   }
 
   .card__description {
+    margin-top: var(--space-xs);
     color: var(--fg-soft);
   }
 
   .schedule__note {
     margin-top: var(--space-lg);
     font-style: italic;
+    font-size: var(--step-1);
     color: var(--fg-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card::after {
+      transition: none;
+    }
   }
 </style>

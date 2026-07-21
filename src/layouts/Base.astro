@@ -51,9 +51,9 @@ const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
     <slot />
 
     <script>
-      // Делікатна поява секцій при скролі.
+      // Поява елементів при скролі. Єдиний клієнтський скрипт на сайті.
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const targets = document.querySelectorAll<HTMLElement>('.reveal');
+      const targets = document.querySelectorAll<HTMLElement>('[data-anim], .logo--draw');
 
       if (reduced || !('IntersectionObserver' in window)) {
         targets.forEach((el) => el.classList.add('is-visible'));
@@ -66,11 +66,21 @@ const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
               observer.unobserve(entry.target); // з'являємось один раз
             }
           },
-          { rootMargin: '0px 0px -12% 0px', threshold: 0.1 },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.15 },
         );
 
         targets.forEach((el) => observer.observe(el));
       }
+
+      /*
+       * Hero видно ще до скролу, тож спостерігач для нього марний —
+       * запускаємо його одразу після першого кадру.
+       */
+      requestAnimationFrame(() => {
+        document
+          .querySelectorAll<HTMLElement>('[data-anim-immediate], .hero .logo--draw')
+          .forEach((el) => el.classList.add('is-visible'));
+      });
     </script>
   </body>
 </html>

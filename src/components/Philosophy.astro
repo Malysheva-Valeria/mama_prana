@@ -7,14 +7,35 @@ const { t } = useContent(Astro.currentLocale);
 ---
 
 <Section id="philosophy" theme="cream" labelledby="philosophy-title">
-  <div class="philosophy reveal">
+  <div class="philosophy">
     <div class="philosophy__text">
-      <p class="eyebrow">{t.philosophy.eyebrow}</p>
-      <h2 id="philosophy-title" class="philosophy__statement">{t.philosophy.statement}</h2>
-      {t.philosophy.body.map((paragraph) => <p class="philosophy__body">{paragraph}</p>)}
+      <p class="eyebrow" data-anim="rise" style="--i: 0">{t.philosophy.eyebrow}</p>
+
+      <h2 id="philosophy-title" class="philosophy__statement">
+        <span class="line" data-anim="mask" style="--i: 1"
+          ><span>{t.philosophy.statement}</span></span
+        >
+      </h2>
+
+      {
+        t.philosophy.body.map((paragraph, i) => (
+          <p class="philosophy__body" data-anim="rise" style={`--i: ${2 + i}`}>
+            {paragraph}
+          </p>
+        ))
+      }
     </div>
 
-    <Photo caption={t.philosophy.imageCaption} ratio="3 / 4" tone={2} class="philosophy__photo" />
+    <div class="philosophy__media parallax" style="--parallax-from: 3rem; --parallax-to: -3rem">
+      <Photo
+        caption={t.philosophy.imageCaption}
+        ratio="3 / 4"
+        tone={2}
+        anim="fade"
+        index={2}
+        kenBurns
+      />
+    </div>
   </div>
 </Section>
 
@@ -33,7 +54,18 @@ const { t } = useContent(Astro.currentLocale);
 
   .philosophy__statement {
     font-size: var(--step-3);
-    max-width: 18ch;
+    font-weight: 300;
+    max-width: 16ch;
+  }
+
+  /* Маска для «шторки» — зсунутий текст не визирає за межі рядка */
+  .line {
+    display: block;
+    overflow: hidden;
+  }
+
+  .line > span {
+    display: block;
   }
 
   .philosophy__body {
@@ -42,7 +74,7 @@ const { t } = useContent(Astro.currentLocale);
 
   @media (min-width: 52rem) {
     .philosophy {
-      grid-template-columns: 1.2fr 0.8fr;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: var(--space-xl);
     }
   }

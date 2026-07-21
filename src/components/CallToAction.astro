@@ -6,14 +6,23 @@ const { t } = useContent(Astro.currentLocale);
 ---
 
 <Section id="contact" theme="terracotta" labelledby="contact-title">
-  <div class="cta reveal">
-    <p class="eyebrow">{t.cta.eyebrow}</p>
-    <h2 id="contact-title" class="cta__title">{t.cta.title}</h2>
-    <p class="cta__body">{t.cta.body}</p>
+  <div class="cta">
+    <p class="eyebrow" data-anim="letters" style="--i: 0">{t.cta.eyebrow}</p>
 
-    <div class="cta__actions">
-      <a class="button" href={t.cta.primaryHref} target="_blank" rel="noopener noreferrer">
-        {t.cta.primaryLabel}
+    <h2 id="contact-title" class="cta__title">
+      <span class="line" data-anim="mask" style="--i: 1"><span>{t.cta.title}</span></span>
+    </h2>
+
+    <p class="cta__body" data-anim="rise" style="--i: 2">{t.cta.body}</p>
+
+    <div class="cta__actions" data-anim="rise" style="--i: 3">
+      <a
+        class="button button--fill"
+        href={t.cta.primaryHref}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span>{t.cta.primaryLabel}</span>
       </a>
       <a
         class="cta__secondary"
@@ -39,10 +48,22 @@ const { t } = useContent(Astro.currentLocale);
 
   .cta__title {
     font-size: var(--step-4);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+
+  .line {
+    display: block;
+    overflow: hidden;
+  }
+
+  .line > span {
+    display: block;
   }
 
   .cta__body {
-    max-width: 46ch;
+    max-width: 44ch;
+    font-size: var(--step-1);
     color: var(--fg-soft);
   }
 
@@ -52,7 +73,34 @@ const { t } = useContent(Astro.currentLocale);
     justify-content: center;
     align-items: center;
     gap: var(--space-md);
-    margin-top: var(--space-sm);
+    margin-top: var(--space-md);
+  }
+
+  /* Заливка кнопки виїжджає знизу, текст перефарбовується поверх неї */
+  .button--fill {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .button--fill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--fg);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur-slow) var(--ease-drift);
+  }
+
+  .button--fill:hover::before {
+    transform: scaleY(1);
+  }
+
+  .button--fill:hover {
+    background: transparent;
+    color: var(--bg);
   }
 
   .cta__secondary {
@@ -66,5 +114,11 @@ const { t } = useContent(Astro.currentLocale);
 
   .cta__secondary:hover {
     color: var(--fg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .button--fill::before {
+      transition: none;
+    }
   }
 </style>

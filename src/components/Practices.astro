@@ -16,20 +16,47 @@ const themes = ['blue', 'terracotta', 'cream'] as const;
       const titleId = `practice-${item.id}`;
       return (
         <Section id={item.id} theme={theme} labelledby={titleId}>
-          <article class="practice reveal" data-flip={index % 2 === 1}>
+          <article class="practice" data-flip={index % 2 === 1}>
+            {/* Величезний номер тлом — ритм і глибина без жодного зображення.
+                Рухається паралаксом, прозорість статична (щоб не перетягувати
+                на себе увагу з назви практики). */}
+            <span class="practice__ghost parallax" aria-hidden="true">{`0${index + 1}`}</span>
+
             <div class="practice__text">
-              <p class="eyebrow">
+              <p class="eyebrow" data-anim="rise" style="--i: 0">
                 {t.practices.eyebrow}
                 <span class="practice__index">{`0${index + 1}`}</span>
               </p>
+
               <h2 id={titleId} class="practice__name">
-                {item.name}
+                <span class="line" data-anim="mask" style="--i: 1">
+                  <span>{item.name}</span>
+                </span>
               </h2>
-              <p class="practice__tagline">{item.tagline}</p>
-              <p class="practice__description">{item.description}</p>
+
+              <p class="practice__tagline" data-anim="rise" style="--i: 2">
+                {item.tagline}
+              </p>
+
+              <hr class="practice__rule" data-anim="line" style="--i: 3" />
+
+              <p class="practice__description" data-anim="rise" style="--i: 4">
+                {item.description}
+              </p>
             </div>
 
-            <Photo ratio="4 / 5" tone={((index % 3) + 1) as 1 | 2 | 3} class="practice__photo" />
+            <div
+              class="practice__media parallax"
+              style={`--parallax-from: ${index % 2 ? '-3.5rem' : '3.5rem'}; --parallax-to: ${index % 2 ? '3.5rem' : '-3.5rem'}`}
+            >
+              <Photo
+                ratio="4 / 5"
+                tone={((index % 3) + 1) as 1 | 2 | 3}
+                anim="fade"
+                index={2}
+                kenBurns
+              />
+            </div>
           </article>
         </Section>
       );
@@ -39,12 +66,31 @@ const themes = ['blue', 'terracotta', 'cream'] as const;
 
 <style>
   .practice {
+    position: relative;
     display: grid;
     gap: var(--space-lg);
     align-items: center;
   }
 
+  /* Номер-привид: майже невидимий, задає масштаб секції */
+  .practice__ghost {
+    position: absolute;
+    top: -0.35em;
+    inset-inline-start: -0.08em;
+    font-family: var(--font-display);
+    font-size: clamp(9rem, 26vw, 22rem);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--fg);
+    opacity: 0.06;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
   .practice__text {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
@@ -58,7 +104,18 @@ const themes = ['blue', 'terracotta', 'cream'] as const;
 
   .practice__name {
     font-size: var(--step-4);
-    line-height: 0.95;
+    font-weight: 300;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+  }
+
+  .line {
+    display: block;
+    overflow: hidden;
+  }
+
+  .line > span {
+    display: block;
   }
 
   .practice__tagline {
@@ -67,9 +124,23 @@ const themes = ['blue', 'terracotta', 'cream'] as const;
     color: var(--accent);
   }
 
+  .practice__rule {
+    width: 100%;
+    max-width: 5rem;
+    height: 1px;
+    border: 0;
+    margin-block: var(--space-sm);
+    background: var(--rule);
+    transform-origin: left;
+  }
+
   .practice__description {
-    margin-top: var(--space-sm);
     color: var(--fg-soft);
+  }
+
+  .practice__media {
+    position: relative;
+    z-index: 1;
   }
 
   @media (min-width: 52rem) {
@@ -81,6 +152,11 @@ const themes = ['blue', 'terracotta', 'cream'] as const;
     /* Кожен другий блок дзеркалимо, щоб стрічка не була монотонною */
     .practice[data-flip='true'] .practice__text {
       order: 2;
+    }
+
+    .practice[data-flip='true'] .practice__ghost {
+      inset-inline-start: auto;
+      inset-inline-end: -0.08em;
     }
   }
 </style>

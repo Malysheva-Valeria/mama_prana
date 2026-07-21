@@ -9,16 +9,22 @@ interface Props {
   size?: string;
   /** Показувати словесний знак під символом */
   withWordmark?: boolean;
+  /** Промальовувати обводку при появі */
+  draw?: boolean;
   class?: string;
 }
 
-const { size = '7rem', withWordmark = false, class: className } = Astro.props;
+const { size = '7rem', withWordmark = false, draw = false, class: className } = Astro.props;
 
 // Промені сходу: кути від горизонту, симетрично
 const rays = [0, 30, 60, 90, 120, 150, 180];
 ---
 
-<div class:list={['logo', className]} style={`--logo-size: ${size}`}>
+<div
+  class:list={['logo', draw && 'logo--draw', className]}
+  style={`--logo-size: ${size}`}
+  data-anim-immediate={draw ? '' : undefined}
+>
   <!-- Якщо поруч є текстовий логотип, символ стає декоративним:
        інакше скрінрідер прочитав би «mama prana» двічі поспіль. -->
   <svg
@@ -28,17 +34,43 @@ const rays = [0, 30, 60, 90, 120, 150, 180];
     aria-hidden={withWordmark ? 'true' : undefined}
     fill="none"
   >
-    <rect x="1" y="1" width="98" height="98" stroke="currentColor" stroke-width="1.5"></rect>
+    <!-- pathLength=1 нормалізує довжину кожної лінії, тож одна анімація
+         штриха однаково працює і для рамки, і для дуги, і для променя. -->
+    <rect
+      x="1"
+      y="1"
+      width="98"
+      height="98"
+      stroke="currentColor"
+      stroke-width="1.5"
+      pathLength="1"
+      data-draw
+      style="--d: 0"></rect>
 
     <!-- горизонт -->
-    <line x1="18" y1="68" x2="82" y2="68" stroke="currentColor" stroke-width="1.5"></line>
+    <line
+      x1="18"
+      y1="68"
+      x2="82"
+      y2="68"
+      stroke="currentColor"
+      stroke-width="1.5"
+      pathLength="1"
+      data-draw
+      style="--d: 1"></line>
 
     <!-- півколо сонця -->
-    <path d="M 33 68 A 17 17 0 0 1 67 68" stroke="currentColor" stroke-width="1.5"></path>
+    <path
+      d="M 33 68 A 17 17 0 0 1 67 68"
+      stroke="currentColor"
+      stroke-width="1.5"
+      pathLength="1"
+      data-draw
+      style="--d: 2"></path>
 
     <!-- промені -->
     {
-      rays.map((deg) => {
+      rays.map((deg, i) => {
         const rad = (deg * Math.PI) / 180;
         const inner = 23;
         const outer = 30;
@@ -51,6 +83,9 @@ const rays = [0, 30, 60, 90, 120, 150, 180];
             stroke="currentColor"
             stroke-width="1.5"
             stroke-linecap="round"
+            pathLength="1"
+            data-draw
+            style={`--d: ${3 + i * 0.5}`}
           />
         );
       })
@@ -77,6 +112,7 @@ const rays = [0, 30, 60, 90, 120, 150, 180];
   .logo__wordmark {
     font-family: var(--font-display);
     font-size: var(--step-3);
+    font-weight: 300;
     letter-spacing: 0.02em;
     line-height: 1;
   }
