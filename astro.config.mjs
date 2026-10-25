@@ -2,13 +2,7 @@
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 
-/**
- * Сайт статичний: жодного рантайму на сервері, вихід — папка `dist/`,
- * яку можна покласти на будь-який хостинг.
- *
- * `site` використовується для канонічних URL, sitemap та og:url.
- * Поки деплою немає — тримаємо продакшн-домен з концепту.
- */
+/* Static output to `dist/`; `site` feeds canonical URLs and sitemap */
 export default defineConfig({
   site: 'https://mamaprana.com.ua',
   output: 'static',
@@ -16,7 +10,7 @@ export default defineConfig({
     defaultLocale: 'uk',
     locales: ['uk', 'en'],
     routing: {
-      // українська живе в корені (/), англійська — під /en
+      // uk at root, en under /en
       prefixDefaultLocale: false,
     },
   },

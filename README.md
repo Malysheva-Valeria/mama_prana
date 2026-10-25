@@ -1,102 +1,91 @@
 # mama prana
 
-Односторінковий сайт студії йоги. Статичний, двомовний (UA/EN), без бекенду.
+One-page website for the Mama Prana yoga studio in Cherkasy. Static, bilingual (UA/EN), no backend.
 
-Концепція, палітра та структура сторінки описані в [`CONCEPT.md`](./CONCEPT.md).
+Brand concept, palette and page structure: [`docs/CONCEPT.md`](./docs/CONCEPT.md).
 
-## Стек
+## Stack
 
-| Що        | Чим                                   |
-| --------- | ------------------------------------- |
-| Фреймворк | [Astro](https://astro.build) (SSG)    |
-| Мова      | TypeScript (strict)                   |
-| Стилі     | Звичайний CSS + дизайн-токени, scoped |
-| Якість    | ESLint · Prettier · `astro check`     |
-| CI        | GitHub Actions                        |
+| What      | With                                         |
+| --------- | -------------------------------------------- |
+| Framework | [Astro](https://astro.build) (static output) |
+| Language  | TypeScript (strict)                          |
+| Styles    | Plain CSS, design tokens, scoped components  |
+| Motion    | CSS only (`animation-timeline`, keyframes)   |
+| Quality   | ESLint · Prettier · `astro check`            |
+| CI        | GitHub Actions                               |
 
-Жодного UI-фреймворку і жодного клієнтського JS, крім ~15 рядків
-IntersectionObserver для появи секцій при скролі.
+No UI framework. The only client script is a small `IntersectionObserver`
+that reveals sections on scroll and replays the logo sunrise.
 
-## Запуск
+## Getting started
 
-Версія Node береться з [`.nvmrc`](./.nvmrc) (Node 24).
-З `fnm` або `nvm` вона підхопиться автоматично при вході в теку.
+Node version comes from [`.nvmrc`](./.nvmrc) (Node 24).
 
 ```bash
 npm install
 npm run dev      # http://localhost:4321
 ```
 
-## Команди
+## Commands
 
-| Команда           | Що робить                                  |
-| ----------------- | ------------------------------------------ |
-| `npm run dev`     | Дев-сервер з гарячим перезавантаженням     |
-| `npm run build`   | Продакшн-збірка у `dist/`                  |
-| `npm run preview` | Локальний перегляд зібраного `dist/`       |
-| `npm run check`   | Перевірка типів у `.astro` та `.ts`        |
-| `npm run lint`    | ESLint (`lint:fix` — з автовиправленням)   |
-| `npm run format`  | Prettier (`format:check` — лише перевірка) |
-| `npm run verify`  | Усе разом — те саме, що ганяє CI           |
+| Command           | What it does                              |
+| ----------------- | ----------------------------------------- |
+| `npm run dev`     | Dev server with hot reload                |
+| `npm run build`   | Production build into `dist/`             |
+| `npm run preview` | Preview the built `dist/` locally         |
+| `npm run check`   | Type-check `.astro` and `.ts` files       |
+| `npm run lint`    | ESLint (`lint:fix` to autofix)            |
+| `npm run format`  | Prettier (`format:check` to verify)       |
+| `npm run verify`  | Everything above, same as CI              |
+| `npm run fonts`   | Re-download brand fonts to `public/fonts` |
 
-Перед комітом достатньо `npm run verify`.
-
-## Структура
+## Structure
 
 ```
 src/
-├── components/     Секції сторінки (Hero, Practices, Gallery…)
+├── assets/photos/  Photos (optimized by astro:assets)
+├── components/     Page sections (Hero, Practices, Schedule, …)
 ├── i18n/
-│   ├── content.ts  ← увесь текст сайту, обидві мови
-│   └── utils.ts    Хелпери мови та шляхів
+│   ├── content.ts  All site copy, both languages
+│   └── utils.ts    Locale and path helpers
 ├── layouts/
-│   └── Base.astro  <head>, SEO, hreflang, скрипт появи секцій
+│   └── Base.astro  <head>, SEO, hreflang, reveal script
 ├── pages/
-│   ├── index.astro     /      (українська)
-│   └── en/index.astro  /en/   (англійська)
+│   ├── index.astro     /     (Ukrainian)
+│   └── en/index.astro  /en/  (English)
 └── styles/
-    ├── tokens.css  ← палітра, типографіка, відступи
-    └── global.css  Reset та утиліти
+    ├── tokens.css  Palette, type scale, spacing, motion
+    ├── motion.css  Reveal and scroll-linked animations
+    └── global.css  Reset and utilities
 ```
 
-## Як вносити зміни
+## Editing
 
-**Текст.** Увесь копірайт лежить у `src/i18n/content.ts` — у компонентах немає
-жодного зашитого рядка. Тип `SiteContent` описує форму контенту, тому
-забутий переклад падає на `npm run check`, а не порожнім місцем на сайті.
+- **Copy and schedule:** `src/i18n/content.ts`. Components contain no hard-coded text,
+  and a missing translation fails `npm run check`.
+- **Colors, fonts, spacing:** only through variables in `src/styles/tokens.css`.
+  Sections pick a palette with `data-theme="cream | blue | terracotta"`.
+- **Photos:** drop files into `src/assets/photos/` and pass them to `<Photo src={…} />`.
+- **New language:** add it to `languages` in `content.ts`, write the dictionary,
+  create `src/pages/<code>/index.astro` and add the locale in `astro.config.mjs`.
 
-**Кольори, шрифти, відступи.** Тільки через змінні в `src/styles/tokens.css`.
-Секції фарбуються атрибутом `data-theme="cream | blue | terracotta"` —
-кольори тексту, ліній та акцентів підбираються самі.
+## Accessibility and performance
 
-**Фото.** Зараз усюди плейсхолдери (`src/components/Photo.astro`).
-Коли з'являться реальні знімки:
+- Semantic markup, labelled sections, skip link.
+- Animations respect `prefers-reduced-motion`.
+- Fully readable without JavaScript; motion is progressive enhancement.
+- `hreflang`, canonical URLs and an auto-generated sitemap for both languages.
+- Self-hosted fonts and responsive webp images.
 
-1. покласти файли в `src/assets/`;
-2. у `Photo.astro` замінити `<div class="photo__placeholder">` на `<Image>`
-   з `astro:assets` — Astro сам згенерує webp/avif, розміри та lazy-loading.
+## Deploying
 
-**Нова мова.** Додати код у `languages` в `content.ts`, дописати словник,
-створити `src/pages/<код>/index.astro` і додати локаль у `astro.config.mjs`.
-TypeScript підкаже все, що лишилось перекласти.
+`npm run build` outputs a static `dist/` that works on any static host
+(Netlify, Vercel, Cloudflare Pages, GitHub Pages). Set `site` in
+`astro.config.mjs` to the production domain.
 
-## Що свідомо не зроблено
+## Open items
 
-- **Деплой** — сайт поки збирається лише локально. `npm run build` дає
-  статичний `dist/`, який можна покласти на Vercel, Netlify, GitHub Pages
-  чи звичайний хостинг без змін у коді.
-- **Шрифти** — використано системні серифні стеки. Брендові шрифти варто
-  покласти локально в `public/fonts/` і підключити через `@font-face`,
-  щоб не залежати від CDN (як і передбачає концепція).
-- **Реальні контакти** — адреса, телефон і посилання на соцмережі
-  в `content.ts` є плейсхолдерами.
-- **Форма запису** — зараз CTA веде в Instagram/Telegram. Повноцінна форма
-  потребує бекенду або зовнішнього сервісу.
-
-## Доступність і продуктивність
-
-- Семантична розмітка, `aria-labelledby` на секціях, skip-link.
-- Анімації вимикаються при `prefers-reduced-motion`.
-- Без JS сайт лишається повністю читабельним — поява секцій це
-  прогресивне покращення, а не умова видимості контенту.
-- `hreflang` та канонічні URL для обох мов, sitemap генерується автоматично.
+- Phone and email are not set in `content.ts` (footer hides them until added).
+- Replace the Telegram link if the studio uses a different handle.
+- Booking is via Instagram/Telegram; a form would need a backend or a third-party service.

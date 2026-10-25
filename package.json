@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Односторінковий сайт студії йоги Mama Prana",
+  "description": "One-page website for the Mama Prana yoga studio",
   "engines": {
     "node": ">=20.0.0"
   },
