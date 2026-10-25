@@ -1,17 +1,6 @@
-/**
- * Система руху.
- *
- * Правила гри:
- * 1. Без JS усе видно одразу — рух це покращення, а не умова видимості.
- *    Стани спрацьовують лише під `.js`.
- * 2. Появи вмикає IntersectionObserver, додаючи `.is-visible`.
- * 3. Послідовність (stagger) задається змінною `--i` на дочірньому елементі.
- * 4. Паралакс і scroll-linked ефекти — на `animation-timeline`, тобто
- *    в компоziторі й без жодного JS. Де не підтримується — просто статика.
- * 5. `prefers-reduced-motion` вимикає все разом.
- */
+/* Motion: no-JS content is visible; reveals use `.js` + `.is-visible`; stagger via `--i`; parallax via `animation-timeline`; reduced motion disables all. */
 
-/* ---------- Базові появи ---------- */
+/* Reveals */
 
 .js [data-anim] {
   --anim-delay: calc(var(--i, 0) * var(--stagger));
@@ -29,24 +18,16 @@
   letter-spacing: inherit;
 }
 
-/* Підйом знизу — робоча конячка для абзаців і карток */
+/* Rise from below */
 .js [data-anim='rise'] {
   transform: translateY(2.5rem);
 }
 
-/*
- * Шторка: рядок виїжджає з-під невидимої маски.
- *
- * Спостерігач стежить саме за «вікном» (цим елементом), а не за текстом
- * усередині. Це принципово: IntersectionObserver рахує площу ПІСЛЯ
- * обрізання, тож елемент, схований власним overflow чи clip-path,
- * має нульову площу перетину і не проявиться ніколи.
- * Вікно ж лишається нормального розміру — і подія стабільно спрацьовує.
- */
+/* Mask reveal: observe the window, not the text, so overflow clipping cannot zero its intersection area */
 .js [data-anim='mask'] {
   display: block;
   overflow: hidden;
-  opacity: 1; /* ховається вміст, а не вікно */
+  opacity: 1; /* hide the content, not the window */
 }
 
 .js [data-anim='mask'] > * {
@@ -60,7 +41,7 @@
   transform: none;
 }
 
-/* Розкриття літер — фірмовий прийом для словесного знаку */
+/* Letter reveal */
 .js [data-anim='letters'] {
   letter-spacing: 0.34em;
   transform: translateY(0.6rem);
@@ -70,12 +51,12 @@
   letter-spacing: 0.02em;
 }
 
-/* М'яке проявлення без зсуву — для фото, щоб не «стрибали» */
+/* Soft fade */
 .js [data-anim='fade'] {
   transform: scale(1.04);
 }
 
-/* Лінія-промінь, що проростає від лівого краю */
+/* Ray line growing from the left */
 .js [data-anim='line'] {
   opacity: 1;
   transform: scaleX(0);
@@ -86,13 +67,9 @@
   transform: scaleX(1);
 }
 
-/* ---------- Малюнок логотипа ---------- */
+/* Logo drawing */
 
-/*
- * Обводка «сходу сонця» промальовується штрихом.
- * `pathLength=1` нормалізує довжину будь-якої лінії, тож одна
- * анімація однаково працює і для дуги, і для променя.
- */
+/* `pathLength=1` makes one stroke animation fit any line */
 .js .logo--draw [data-draw] {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
@@ -118,13 +95,44 @@
   }
 }
 
-/* ---------- Scroll-linked ефекти ---------- */
+/* `sunrise`: sun rises on each viewport entry (`.is-rising`, see Base.astro), then rays spin */
+.js .logo--sunrise .logo__sun {
+  opacity: 0;
+  transform: translateY(24px);
+}
 
-/*
- * `animation-timeline: view()` прив'язує прогрес анімації до положення
- * елемента у в'юпорті. Це нативний паралакс: без JS, без jank.
- * Браузери без підтримки просто показують статичний кадр.
- */
+.js .logo--sunrise.is-rising .logo__sun {
+  animation: sun-rise 1.8s var(--ease-drift) var(--rise-delay, 1.5s) forwards;
+}
+
+.logo__rays {
+  transform-origin: 50px 68px;
+}
+
+.js .logo--sunrise.is-rising .logo__rays {
+  animation: sun-spin 30s linear infinite;
+}
+
+@keyframes sun-rise {
+  from {
+    opacity: 1;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sun-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scroll-linked effects */
+
+/* `animation-timeline: view()` gives JS-free parallax; static where unsupported */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .parallax {
@@ -142,7 +150,7 @@
       }
     }
 
-    /* Повільний зум фото по мірі проходження екраном */
+    /* Slow photo zoom */
     .ken-burns {
       animation: ken-burns linear both;
       animation-timeline: view();
@@ -158,7 +166,7 @@
       }
     }
 
-    /* Hero розчиняється й трохи від'їжджає, поки його гортають */
+    /* Hero fades out on scroll */
     .hero-fade {
       animation: hero-fade linear both;
       animation-timeline: view();
@@ -174,36 +182,7 @@
   }
 }
 
-/* ---------- Індикатор прокрутки ---------- */
-
-.scroll-cue {
-  animation: scroll-cue 2.6s var(--ease-drift) infinite;
-}
-
-@keyframes scroll-cue {
-  0% {
-    transform: scaleY(0);
-    transform-origin: top;
-    opacity: 0;
-  }
-  40% {
-    transform: scaleY(1);
-    transform-origin: top;
-    opacity: 1;
-  }
-  60% {
-    transform: scaleY(1);
-    transform-origin: bottom;
-    opacity: 1;
-  }
-  100% {
-    transform: scaleY(0);
-    transform-origin: bottom;
-    opacity: 0;
-  }
-}
-
-/* ---------- Повага до налаштувань користувача ---------- */
+/* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
   .js [data-anim],
@@ -221,7 +200,14 @@
     animation: none;
   }
 
-  .scroll-cue {
+  .js .logo--sunrise .logo__sun,
+  .js .logo--sunrise.is-rising .logo__sun {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .js .logo--sunrise.is-rising .logo__rays {
     animation: none;
   }
 }

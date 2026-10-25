@@ -13,24 +13,24 @@ const { t } = useContent(Astro.currentLocale);
     </h2>
   </header>
 
-  <ul class="schedule" role="list">
+  <div class="schedule">
     {
-      t.schedule.cards.map((card, index) => (
-        <li class="card" data-anim="rise" style={`--i: ${index}`}>
-          <span class="card__number eyebrow" aria-hidden="true">
-            {`0${index + 1}`}
-          </span>
-          <h3 class="card__name">{card.name}</h3>
-          <p class="card__meta">
-            <span>{card.duration}</span>
-            <span aria-hidden="true">·</span>
-            <span>{card.level}</span>
-          </p>
-          <p class="card__description">{card.description}</p>
-        </li>
+      t.schedule.days.map((day, index) => (
+        <section class="day" data-anim="rise" style={`--i: ${index}`}>
+          <h3 class="day__name eyebrow">{day.day}</h3>
+          <ul class="day__classes" role="list">
+            {day.classes.map((item) => (
+              <li class="class">
+                <time class="class__time">{item.time}</time>
+                <span class="class__name">{item.name}</span>
+                {item.isNew && <span class="class__new">New!</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
       ))
     }
-  </ul>
+  </div>
 
   <p class="schedule__note" data-anim="rise" style="--i: 4">{t.schedule.note}</p>
 </Section>
@@ -59,25 +59,21 @@ const { t } = useContent(Astro.currentLocale);
 
   .schedule {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-    gap: 0;
-    padding: 0;
-    margin: 0;
+    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
     border-top: 1px solid var(--rule);
   }
 
-  .card {
+  .day {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: var(--space-sm);
     padding: var(--space-md) var(--space-md) var(--space-lg) 0;
     border-bottom: 1px solid var(--rule);
-    transition: background-color var(--dur-med) var(--ease-out);
   }
 
-  /* Тонка лінія-промінь, що проростає під карткою при наведенні */
-  .card::after {
+  /* Accent line grows under the day on hover */
+  .day::after {
     content: '';
     position: absolute;
     left: 0;
@@ -90,34 +86,49 @@ const { t } = useContent(Astro.currentLocale);
     transition: transform var(--dur-slow) var(--ease-drift);
   }
 
-  .card:hover::after {
+  .day:hover::after {
     transform: scaleX(1);
   }
 
-  .card__number {
-    color: var(--fg-soft);
-    opacity: 0.5;
-  }
-
-  .card__name {
-    font-size: var(--step-2);
-    font-weight: 300;
-    margin-top: var(--space-xs);
-  }
-
-  .card__meta {
-    display: flex;
-    gap: 0.5em;
-    font-family: var(--font-label);
-    font-size: var(--step--1);
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
+  .day__name {
     color: var(--accent);
   }
 
-  .card__description {
-    margin-top: var(--space-xs);
+  .day__classes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: 0;
+    margin: 0;
+  }
+
+  .class {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25em 0.9em;
+  }
+
+  .class__time {
+    font-family: var(--font-label);
+    font-size: var(--step--1);
+    letter-spacing: 0.16em;
     color: var(--fg-soft);
+  }
+
+  .class__name {
+    font-size: var(--step-1);
+    font-weight: 300;
+  }
+
+  .class__new {
+    padding: 0.1em 0.7em;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--c-cream-warm);
+    font-family: var(--font-label);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
   }
 
   .schedule__note {
@@ -128,7 +139,7 @@ const { t } = useContent(Astro.currentLocale);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .card::after {
+    .day::after {
       transition: none;
     }
   }

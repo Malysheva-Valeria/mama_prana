@@ -8,7 +8,7 @@ const { lang, t } = useContent(Astro.currentLocale);
 const canonical = new URL(localizePath('/', lang), Astro.site);
 const ogImage = new URL('/og-image.svg', Astro.site);
 
-/** hreflang для кожної мови + x-default на українську */
+/** hreflang per locale, x-default to uk */
 const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
   hreflang: l,
   href: new URL(localizePath('/', l), Astro.site).href,
@@ -39,8 +39,7 @@ const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#1e3a5f" />
 
-    <!-- Позначаємо, що JS увімкнено, ДО першого рендеру: інакше блоки .reveal
-         встигнуть блимнути видимими перед тим, як їх приховає CSS. -->
+    <!-- Set before first render to avoid a flash of visible .reveal blocks -->
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
@@ -51,7 +50,7 @@ const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
     <slot />
 
     <script>
-      // Поява елементів при скролі. Єдиний клієнтський скрипт на сайті.
+      // Scroll reveals; the only client script
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const targets = document.querySelectorAll<HTMLElement>('[data-anim], .logo--draw');
 
@@ -63,7 +62,7 @@ const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
             for (const entry of entries) {
               if (!entry.isIntersecting) continue;
               entry.target.classList.add('is-visible');
-              observer.unobserve(entry.target); // з'являємось один раз
+              observer.unobserve(entry.target); // reveal once
             }
           },
           { rootMargin: '0px 0px -10% 0px', threshold: 0.15 },
@@ -72,10 +71,31 @@ const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
         targets.forEach((el) => observer.observe(el));
       }
 
-      /*
-       * Hero видно ще до скролу, тож спостерігач для нього марний —
-       * запускаємо його одразу після першого кадру.
-       */
+      /* Hero is visible before any scroll, so trigger it after the first frame */
+
+      /* Sun rises on each Hero entry; the first waits for the frame to draw */
+      const sun = document.querySelector<HTMLElement>('.logo--sunrise');
+      if (sun) {
+        if (reduced || !('IntersectionObserver' in window)) {
+          sun.classList.add('is-rising');
+        } else {
+          let seen = false;
+          new IntersectionObserver(
+            ([entry]) => {
+              if (!entry) return;
+              if (entry.isIntersecting) {
+                if (seen) sun.style.setProperty('--rise-delay', '0.2s');
+                seen = true;
+                sun.classList.add('is-rising');
+              } else {
+                sun.classList.remove('is-rising');
+              }
+            },
+            { threshold: 0.5 },
+          ).observe(sun);
+        }
+      }
+
       requestAnimationFrame(() => {
         document
           .querySelectorAll<HTMLElement>('[data-anim-immediate], .hero .logo--draw')

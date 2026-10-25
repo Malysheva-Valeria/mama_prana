@@ -1,11 +1,16 @@
 ---
 import Photo from './Photo.astro';
+import body from '@/assets/photos/body.jpg';
+import face from '@/assets/photos/face.jpg';
+import retreats from '@/assets/photos/retreats.jpg';
 import Section from './Section.astro';
 import { useContent } from '@/i18n/utils';
 
 const { t } = useContent(Astro.currentLocale);
 
-/** Серце сторінки: три смуги з чергуванням кольорів, як у презентації */
+const photos = { body, face, retreats };
+
+/** Three bands with alternating colors */
 const themes = ['blue', 'terracotta', 'cream'] as const;
 ---
 
@@ -17,9 +22,7 @@ const themes = ['blue', 'terracotta', 'cream'] as const;
       return (
         <Section id={item.id} theme={theme} labelledby={titleId}>
           <article class="practice" data-flip={index % 2 === 1}>
-            {/* Величезний номер тлом — ритм і глибина без жодного зображення.
-                Рухається паралаксом, прозорість статична (щоб не перетягувати
-                на себе увагу з назви практики). */}
+            {/* Ghost number: parallax, static opacity */}
             <span class="practice__ghost parallax" aria-hidden="true">{`0${index + 1}`}</span>
 
             <div class="practice__text">
@@ -50,6 +53,8 @@ const themes = ['blue', 'terracotta', 'cream'] as const;
               style={`--parallax-from: ${index % 2 ? '-3.5rem' : '3.5rem'}; --parallax-to: ${index % 2 ? '3.5rem' : '-3.5rem'}`}
             >
               <Photo
+                src={photos[item.id as keyof typeof photos]}
+                alt={item.name}
                 ratio="4 / 5"
                 tone={((index % 3) + 1) as 1 | 2 | 3}
                 anim="fade"
@@ -72,7 +77,7 @@ const themes = ['blue', 'terracotta', 'cream'] as const;
     align-items: center;
   }
 
-  /* Номер-привид: майже невидимий, задає масштаб секції */
+  /* Ghost number: near-invisible, sets the section scale */
   .practice__ghost {
     position: absolute;
     top: -0.35em;
@@ -149,7 +154,7 @@ const themes = ['blue', 'terracotta', 'cream'] as const;
       gap: var(--space-xl);
     }
 
-    /* Кожен другий блок дзеркалимо, щоб стрічка не була монотонною */
+    /* Mirror every second block */
     .practice[data-flip='true'] .practice__text {
       order: 2;
     }

@@ -1,20 +1,17 @@
 import { content, defaultLang, languages, type Lang, type SiteContent } from './content';
 
-/** Звужує `Astro.currentLocale` (string | undefined) до нашого типу мови. */
+/** Narrows `Astro.currentLocale` to our Lang. */
 export function resolveLang(locale: string | undefined): Lang {
   return locale !== undefined && locale in languages ? (locale as Lang) : defaultLang;
 }
 
-/** Контент для конкретної мови. */
+/** Content for a locale. */
 export function useContent(locale: string | undefined): { lang: Lang; t: SiteContent } {
   const lang = resolveLang(locale);
   return { lang, t: content[lang] };
 }
 
-/**
- * Будує шлях з урахуванням мови.
- * `localizePath('/', 'uk')` → `/`, `localizePath('/', 'en')` → `/en/`
- */
+/** Locale-aware path: `localizePath('/', 'en')` → `/en/` */
 export function localizePath(path: string, lang: Lang): string {
   const clean = path.replace(/^\/+/, '');
   const prefix = lang === defaultLang ? '' : `/${lang}`;
@@ -22,12 +19,12 @@ export function localizePath(path: string, lang: Lang): string {
   return `${prefix}${suffix}`;
 }
 
-/** Усі мови, крім поточної — для перемикача. */
+/** All locales except the current one. */
 export function otherLangs(current: Lang): Lang[] {
   return (Object.keys(languages) as Lang[]).filter((l) => l !== current);
 }
 
-/** Підстановка у шаблон вигляду `Перемкнути на {lang}`. */
+/** Fills `{lang}` in a template. */
 export function interpolate(template: string, values: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (match, key: string) => values[key] ?? match);
 }

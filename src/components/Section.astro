@@ -1,12 +1,9 @@
 ---
-/**
- * Обгортка секції: задає тему (кольори), вертикальні відступи
- * та контейнер. Уся сторінка складається з цих блоків.
- */
+/** Section wrapper: theme, vertical padding, container. */
 interface Props {
   id?: string;
   theme?: 'cream' | 'blue' | 'terracotta';
-  /** Прибрати контейнер — для секцій на всю ширину (галерея, hero) */
+  /** Drop the container for full-width sections */
   bleed?: boolean;
   class?: string;
   labelledby?: string;

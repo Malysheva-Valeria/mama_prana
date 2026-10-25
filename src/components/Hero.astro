@@ -4,7 +4,7 @@ import { useContent } from '@/i18n/utils';
 
 const { t } = useContent(Astro.currentLocale);
 
-// Мантра розбивається на фрази — кожна виїжджає з-під маски по черзі
+// Each mantra phrase reveals in turn
 const phrases = t.hero.mantra.split(/(?<=\.)\s+/).filter(Boolean);
 ---
 
@@ -16,7 +16,7 @@ const phrases = t.hero.mantra.split(/(?<=\.)\s+/).filter(Boolean);
       {t.hero.eyebrow}
     </p>
 
-    <Logo size="clamp(5rem, 12vw, 8.5rem)" withWordmark draw class="hero__logo" />
+    <Logo size="clamp(5rem, 12vw, 8.5rem)" withWordmark draw sunrise class="hero__logo" />
 
     <h1 class="hero__mantra">
       {
@@ -28,11 +28,6 @@ const phrases = t.hero.mantra.split(/(?<=\.)\s+/).filter(Boolean);
       }
     </h1>
   </div>
-
-  <a class="hero__scroll" href="#philosophy" data-anim="rise" data-anim-immediate style="--i: 8">
-    <span class="eyebrow">{t.hero.scrollHint}</span>
-    <span class="hero__scroll-line scroll-cue" aria-hidden="true"></span>
-  </a>
 </section>
 
 <style>
@@ -47,7 +42,7 @@ const phrases = t.hero.mantra.split(/(?<=\.)\s+/).filter(Boolean);
     overflow: hidden;
   }
 
-  /* Тепле світло за логотипом — натяк на схід сонця, не ілюстрація */
+  /* Warm glow behind the logo, a hint of sunrise */
   .hero__glow {
     position: absolute;
     top: 42%;
@@ -64,7 +59,7 @@ const phrases = t.hero.mantra.split(/(?<=\.)\s+/).filter(Boolean);
     animation: breathe 11s ease-in-out infinite;
   }
 
-  /* Повільне «дихання» — єдиний нескінченний рух на сторінці */
+  /* Slow breathing, the only endless motion */
   @keyframes breathe {
     0%,
     100% {
@@ -97,7 +92,7 @@ const phrases = t.hero.mantra.split(/(?<=\.)\s+/).filter(Boolean);
     color: var(--fg-soft);
   }
 
-  /* Маска для кожного рядка: те, що зсунуте вниз, за неї не виходить */
+  /* Mask for each line; shifted text stays clipped */
   .hero__line {
     display: block;
     overflow: hidden;
@@ -105,26 +100,6 @@ const phrases = t.hero.mantra.split(/(?<=\.)\s+/).filter(Boolean);
 
   .hero__line > span {
     display: block;
-  }
-
-  .hero__scroll {
-    position: absolute;
-    bottom: var(--space-lg);
-    left: 50%;
-    translate: -50% 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-sm);
-    text-decoration: none;
-    color: var(--c-muted-blue);
-  }
-
-  .hero__scroll-line {
-    display: block;
-    width: 1px;
-    height: 3.5rem;
-    background: currentColor;
   }
 
   @media (prefers-reduced-motion: reduce) {

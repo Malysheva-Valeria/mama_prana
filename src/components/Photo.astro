@@ -1,28 +1,29 @@
 ---
-/**
- * Місце під фотографію.
- *
- * Поки реальних знімків немає, малюємо делікатний плейсхолдер у кольорах бренду.
- * Коли з'являться фото: покласти файли в `src/assets/`, імпортувати та
- * замінити <div class="photo__placeholder"> на <Image> з `astro:assets`
- * (він сам зробить webp/avif, розміри та lazy-loading).
- */
+/** Photo from `src/assets/`; without `src`, a brand-colored placeholder. */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 interface Props {
+  /** Imported file from `src/assets/` */
+  src?: ImageMetadata;
+  alt?: string;
   caption?: string;
-  /** CSS aspect-ratio, напр. '3 / 4' */
+  /** CSS aspect-ratio, e.g. '3 / 4' */
   ratio?: string;
-  /** Варіант заливки плейсхолдера — щоб сусідні фото не були однакові */
+  /** Placeholder fill variant */
   tone?: 1 | 2 | 3;
-  /** Тип появи; `false` — без анімації */
+  /** Reveal type; `false` disables */
   anim?: 'fade' | 'rise' | false;
-  /** Порядковий номер для послідовної появи */
+  /** Stagger order */
   index?: number;
-  /** Повільний зум, поки фото проходить екраном */
+  /** Slow zoom while in view */
   kenBurns?: boolean;
   class?: string;
 }
 
 const {
+  src,
+  alt = '',
   caption,
   ratio = '3 / 4',
   tone = 1,
@@ -35,14 +36,27 @@ const {
 
 <figure class:list={['photo', className]} style={`--ratio: ${ratio}`}>
   <div class="photo__frame">
-    <div
-      class:list={['photo__placeholder', kenBurns && 'ken-burns']}
-      data-tone={tone}
-      data-anim={anim === false ? undefined : anim}
-      style={`--i: ${index}`}
-      aria-hidden="true"
-    >
-    </div>
+    {
+      src ? (
+        <Image
+          src={src}
+          alt={alt}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 52rem) 33vw, 100vw"
+          class:list={['photo__image', kenBurns && 'ken-burns']}
+          data-anim={anim === false ? undefined : anim}
+          style={`--i: ${index}`}
+        />
+      ) : (
+        <div
+          class:list={['photo__placeholder', kenBurns && 'ken-burns']}
+          data-tone={tone}
+          data-anim={anim === false ? undefined : anim}
+          style={`--i: ${index}`}
+          aria-hidden="true"
+        />
+      )
+    }
   </div>
 
   {
@@ -61,9 +75,21 @@ const {
     gap: var(--space-sm);
   }
 
-  /* Рамка обрізає зум, щоб фото не «розпихало» сусідів */
+  /* Frame clips the zoom */
   .photo__frame {
     overflow: hidden;
+  }
+
+  .photo__image {
+    display: block;
+    aspect-ratio: var(--ratio);
+    width: 100%;
+    object-fit: cover;
+    transition: scale var(--dur-xslow) var(--ease-drift);
+  }
+
+  .photo:hover .photo__image {
+    scale: 1.03;
   }
 
   .photo__placeholder {
@@ -99,7 +125,8 @@ const {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .photo:hover .photo__placeholder {
+    .photo:hover .photo__placeholder,
+    .photo:hover .photo__image {
       scale: 1;
     }
   }

@@ -5,7 +5,7 @@ import { useContent } from '@/i18n/utils';
 
 const { t } = useContent(Astro.currentLocale);
 
-// Обчислюється під час збірки — у статиці рік «застигне» до наступного білду.
+// Computed at build time
 const year = new Date().getFullYear();
 
 const navLinks = [
@@ -41,8 +41,20 @@ const navLinks = [
       <h2 class="eyebrow">{t.footer.contactTitle}</h2>
       <ul role="list">
         <li>{t.footer.address}</li>
-        <li><a href={`mailto:${t.footer.email}`}>{t.footer.email}</a></li>
-        <li><a href={`tel:${t.footer.phone.replace(/\s/g, '')}`}>{t.footer.phone}</a></li>
+        {
+          t.footer.email && (
+            <li>
+              <a href={`mailto:${t.footer.email}`}>{t.footer.email}</a>
+            </li>
+          )
+        }
+        {
+          t.footer.phone && (
+            <li>
+              <a href={`tel:${t.footer.phone.replace(/\s/g, '')}`}>{t.footer.phone}</a>
+            </li>
+          )
+        }
         {
           t.footer.social.map((s) => (
             <li>

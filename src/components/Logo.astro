@@ -1,32 +1,47 @@
 ---
-/**
- * Символ бренду: схід сонця у квадраті.
- * Квадрат — стабільність, промені — енергія. Разом = mama prana.
- * Малюємо inline-SVG, щоб він успадковував колір секції через `currentColor`.
- */
+/** Brand symbol: sunrise in a square. Inline SVG, inherits `currentColor`. */
 interface Props {
-  /** Розмір сторони квадрата */
+  /** Square side */
   size?: string;
-  /** Показувати словесний знак під символом */
+  /** Show wordmark below the symbol */
   withWordmark?: boolean;
-  /** Промальовувати обводку при появі */
+  /** Draw the outline on reveal */
   draw?: boolean;
+  /** Sun rises once, then rays spin */
+  sunrise?: boolean;
   class?: string;
 }
 
-const { size = '7rem', withWordmark = false, draw = false, class: className } = Astro.props;
+const {
+  size = '7rem',
+  withWordmark = false,
+  draw = false,
+  sunrise = false,
+  class: className,
+} = Astro.props;
 
-// Промені сходу: кути від горизонту, симетрично
+// Sunrise rays, symmetric from the horizon
 const rays = [0, 30, 60, 90, 120, 150, 180];
+// Full ring of rays for spinning; clipPath hides those below the horizon
+const spinRays = Array.from({ length: 12 }, (_, i) => i * 30);
+
+const ray = (deg: number) => {
+  const rad = (deg * Math.PI) / 180;
+  return {
+    x1: 50 - Math.cos(rad) * 23,
+    y1: 68 - Math.sin(rad) * 23,
+    x2: 50 - Math.cos(rad) * 30,
+    y2: 68 - Math.sin(rad) * 30,
+  };
+};
 ---
 
 <div
-  class:list={['logo', draw && 'logo--draw', className]}
+  class:list={['logo', draw && 'logo--draw', sunrise && 'logo--sunrise', className]}
   style={`--logo-size: ${size}`}
   data-anim-immediate={draw ? '' : undefined}
 >
-  <!-- Якщо поруч є текстовий логотип, символ стає декоративним:
-       інакше скрінрідер прочитав би «mama prana» двічі поспіль. -->
+  <!-- Decorative when a text logo sits beside it -->
   <svg
     viewBox="0 0 100 100"
     role={withWordmark ? 'presentation' : 'img'}
@@ -34,8 +49,7 @@ const rays = [0, 30, 60, 90, 120, 150, 180];
     aria-hidden={withWordmark ? 'true' : undefined}
     fill="none"
   >
-    <!-- pathLength=1 нормалізує довжину кожної лінії, тож одна анімація
-         штриха однаково працює і для рамки, і для дуги, і для променя. -->
+    <!-- pathLength=1 lets one stroke animation fit every line -->
     <rect
       x="1"
       y="1"
@@ -47,7 +61,7 @@ const rays = [0, 30, 60, 90, 120, 150, 180];
       data-draw
       style="--d: 0"></rect>
 
-    <!-- горизонт -->
+    <!-- horizon -->
     <line
       x1="18"
       y1="68"
@@ -59,36 +73,51 @@ const rays = [0, 30, 60, 90, 120, 150, 180];
       data-draw
       style="--d: 1"></line>
 
-    <!-- півколо сонця -->
-    <path
-      d="M 33 68 A 17 17 0 0 1 67 68"
-      stroke="currentColor"
-      stroke-width="1.5"
-      pathLength="1"
-      data-draw
-      style="--d: 2"></path>
-
-    <!-- промені -->
     {
-      rays.map((deg, i) => {
-        const rad = (deg * Math.PI) / 180;
-        const inner = 23;
-        const outer = 30;
-        return (
-          <line
-            x1={50 - Math.cos(rad) * inner}
-            y1={68 - Math.sin(rad) * inner}
-            x2={50 - Math.cos(rad) * outer}
-            y2={68 - Math.sin(rad) * outer}
+      sunrise ? (
+        <>
+          <defs>
+            <clipPath id="logo-horizon-clip">
+              <rect x="0" y="0" width="100" height="68" />
+            </clipPath>
+          </defs>
+          <g clip-path="url(#logo-horizon-clip)">
+            <g class="logo__sun" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M 33 68 A 17 17 0 0 1 67 68" />
+              <g class="logo__rays">
+                {spinRays.map((deg) => (
+                  <line {...ray(deg)} />
+                ))}
+              </g>
+            </g>
+          </g>
+        </>
+      ) : (
+        <>
+          {/* sun arc */}
+          <path
+            d="M 33 68 A 17 17 0 0 1 67 68"
             stroke="currentColor"
             stroke-width="1.5"
-            stroke-linecap="round"
             pathLength="1"
             data-draw
-            style={`--d: ${3 + i * 0.5}`}
+            style="--d: 2"
           />
-        );
-      })
+
+          {/* rays */}
+          {rays.map((deg, i) => (
+            <line
+              {...ray(deg)}
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              pathLength="1"
+              data-draw
+              style={`--d: ${3 + i * 0.5}`}
+            />
+          ))}
+        </>
+      )
     }
   </svg>
 

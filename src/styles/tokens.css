@@ -1,35 +1,30 @@
-/**
- * Дизайн-токени бренду mama prana.
- * Компоненти НЕ використовують сирі значення кольорів чи розмірів — лише ці змінні.
- */
+/* Design tokens. Components use these variables, never raw values. */
 
 :root {
-  /* --- Палітра бренду --- */
-  --c-blue: #1e3a5f; /* глибокий синій — основа, стабільність */
-  --c-terracotta: #c15a34; /* теракота — акцент, енергія */
-  --c-cream: #eae4d8; /* крем — світлий фон, повітря */
-  --c-muted-blue: #8fa6bb; /* приглушений блакитний — спокій */
+  /* Brand palette */
+  --c-blue: #1e3a5f; /* base */
+  --c-terracotta: #c15a34; /* accent */
+  --c-cream: #eae4d8; /* light background */
+  --c-muted-blue: #8fa6bb; /* secondary */
 
-  /* Похідні відтінки */
+  /* Derived shades */
   --c-blue-deep: #16293f;
   --c-cream-warm: #f4f0e8;
   --c-ink: #1a1a1a;
 
-  /* --- Семантичні ролі --- */
+  /* Semantic roles */
   --bg: var(--c-cream-warm);
   --fg: var(--c-blue);
   --fg-soft: color-mix(in srgb, var(--c-blue) 68%, transparent);
   --accent: var(--c-terracotta);
   --rule: color-mix(in srgb, var(--c-blue) 16%, transparent);
 
-  /* --- Типографіка --- */
+  /* Typography */
   --font-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
   --font-body: 'EB Garamond', 'Iowan Old Style', Georgia, serif;
   --font-label: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 
-  /* Плавна типографічна шкала (fluid, без медіазапитів).
-     Верхні щаблі навмисно різкі — контраст між дрібним лейблом
-     і величезним серифом і є характером бренду. */
+  /* Fluid type scale; upper steps are deliberately sharp */
   --step--1: clamp(0.72rem, 0.68rem + 0.18vw, 0.82rem);
   --step-0: clamp(1.05rem, 1rem + 0.3vw, 1.25rem);
   --step-1: clamp(1.3rem, 1.15rem + 0.6vw, 1.75rem);
@@ -41,32 +36,29 @@
   --leading-tight: 1.1;
   --leading-body: 1.7;
 
-  /* --- Простір --- */
+  /* Space */
   --space-xs: 0.5rem;
   --space-sm: 1rem;
   --space-md: 2rem;
   --space-lg: 4rem;
   --space-xl: clamp(5rem, 10vw, 9rem);
 
-  --measure: 62ch; /* комфортна довжина рядка */
+  --measure: 62ch; /* line length */
   --container: 76rem;
   --gutter: clamp(1.25rem, 5vw, 4rem);
 
-  /* --- Рух --- */
+  /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  /* Довга «дихальна» крива для великих появ — рух гальмує майже до нуля */
+  /* Long easing for large reveals */
   --ease-drift: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-xslow: 1600ms;
   --dur-slow: 1000ms;
   --dur-med: 450ms;
-  /* Крок затримки для послідовної появи дочірніх елементів */
+  /* Stagger step */
   --stagger: 110ms;
 }
 
-/**
- * Тематизація секцій. Секція оголошує `data-theme`, а її вміст
- * автоматично отримує правильні кольори тексту, ліній та акцентів.
- */
+/* Section themes: `data-theme` sets text, rule and accent colors */
 [data-theme='cream'] {
   --bg: var(--c-cream-warm);
   --fg: var(--c-blue);

@@ -1,5 +1,6 @@
 ---
 import Photo from './Photo.astro';
+import portrait from '@/assets/photos/philosophy.jpg';
 import Section from './Section.astro';
 import { useContent } from '@/i18n/utils';
 
@@ -28,7 +29,8 @@ const { t } = useContent(Astro.currentLocale);
 
     <div class="philosophy__media parallax" style="--parallax-from: 3rem; --parallax-to: -3rem">
       <Photo
-        caption={t.philosophy.imageCaption}
+        src={portrait}
+        alt={t.philosophy.imageCaption}
         ratio="3 / 4"
         tone={2}
         anim="fade"
@@ -58,7 +60,7 @@ const { t } = useContent(Astro.currentLocale);
     max-width: 16ch;
   }
 
-  /* Маска для «шторки» — зсунутий текст не визирає за межі рядка */
+  /* Mask for the reveal */
   .line {
     display: block;
     overflow: hidden;

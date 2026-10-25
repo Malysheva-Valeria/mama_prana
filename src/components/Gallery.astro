@@ -1,9 +1,17 @@
 ---
 import Photo from './Photo.astro';
+import hall from '@/assets/photos/hall.jpg';
+import arches from '@/assets/photos/arches.jpg';
+import morning from '@/assets/photos/morning.jpg';
+import lounge from '@/assets/photos/lounge.jpg';
+import details from '@/assets/photos/details.jpg';
+import evening from '@/assets/photos/evening.jpg';
 import Section from './Section.astro';
 import { useContent } from '@/i18n/utils';
 
 const { t } = useContent(Astro.currentLocale);
+
+const photos = [hall, arches, morning, lounge, details, evening];
 ---
 
 <Section id="space" theme="cream" labelledby="space-title">
@@ -22,6 +30,9 @@ const { t } = useContent(Astro.currentLocale);
           style={`--parallax-from: ${index % 2 ? '4.5rem' : '1.5rem'}; --parallax-to: ${index % 2 ? '-4.5rem' : '-1.5rem'}`}
         >
           <Photo
+            src={photos[index]}
+            alt={caption}
+            caption={caption}
             caption={caption}
             ratio={index % 3 === 0 ? '4 / 5' : '1 / 1'}
             tone={((index % 3) + 1) as 1 | 2 | 3}
@@ -64,7 +75,7 @@ const { t } = useContent(Astro.currentLocale);
     align-items: start;
   }
 
-  /* Легкий вертикальний зсув — стрічка «дихає», а не марширує рівним рядом */
+  /* Slight vertical offset so the strip does not march in a row */
   @media (min-width: 52rem) {
     .gallery__cell:nth-child(even) {
       margin-top: var(--space-lg);

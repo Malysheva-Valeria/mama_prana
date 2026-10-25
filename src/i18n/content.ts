@@ -1,10 +1,4 @@
-/**
- * Увесь текст сайту живе тут — у компонентах немає жодного рядка копірайту.
- *
- * `SiteContent` описує форму контенту, а `content` типізовано як
- * `Record<Lang, SiteContent>`, тому забутий переклад — це помилка компіляції,
- * а не порожнє місце на живому сайті.
- */
+/** All site copy lives here; a missing translation fails compilation. */
 
 export const languages = {
   uk: 'Українська',
@@ -15,25 +9,30 @@ export type Lang = keyof typeof languages;
 
 export const defaultLang: Lang = 'uk';
 
-/** Короткі підписи для перемикача мов */
+/** Short labels for the language switcher */
 export const languageShort: Record<Lang, string> = {
   uk: 'UA',
   en: 'EN',
 };
 
 export interface PracticeItem {
-  /** Використовується як id секції та якір навігації */
+  /** Section id and nav anchor */
   id: string;
   name: string;
   tagline: string;
   description: string;
 }
 
-export interface ScheduleCard {
+export interface ScheduleClass {
+  time: string;
   name: string;
-  duration: string;
-  level: string;
-  description: string;
+  /** Shows a "New!" badge */
+  isNew?: boolean;
+}
+
+export interface ScheduleDay {
+  day: string;
+  classes: ScheduleClass[];
 }
 
 export interface SocialLink {
@@ -57,7 +56,6 @@ export interface SiteContent {
   hero: {
     eyebrow: string;
     mantra: string;
-    scrollHint: string;
   };
   philosophy: {
     eyebrow: string;
@@ -79,7 +77,7 @@ export interface SiteContent {
     eyebrow: string;
     title: string;
     note: string;
-    cards: ScheduleCard[];
+    days: ScheduleDay[];
   };
   cta: {
     eyebrow: string;
@@ -95,15 +93,15 @@ export interface SiteContent {
     navTitle: string;
     contactTitle: string;
     address: string;
-    email: string;
-    phone: string;
+    email?: string;
+    phone?: string;
     social: SocialLink[];
     rights: string;
   };
   a11y: {
     skipToContent: string;
     languageSwitcher: string;
-    /** Шаблон з `{lang}` — підставляється назва мови */
+    /** Template with `{lang}` */
     switchTo: string;
   };
 }
@@ -125,7 +123,6 @@ const uk: SiteContent = {
   hero: {
     eyebrow: 'Yoga Studio',
     mantra: 'Дихай. Рухайся. Повертайся до себе.',
-    scrollHint: 'Гортайте',
   },
   philosophy: {
     eyebrow: 'Про студію',
@@ -176,33 +173,56 @@ const uk: SiteContent = {
     ],
   },
   schedule: {
-    eyebrow: 'Формати',
-    title: 'Як можна практикувати',
-    note: 'Актуальний розклад на тиждень — у нашому Instagram. Перше заняття завжди пробне.',
-    cards: [
+    eyebrow: 'Щотижня',
+    title: 'Розклад',
+    note: 'Запис обов’язковий.',
+    days: [
       {
-        name: 'Групова практика',
-        duration: '75 хв',
-        level: 'Усі рівні',
-        description: 'До восьми людей у залі. Достатньо уваги кожному, достатньо простору кожному.',
+        day: 'Понеділок',
+        classes: [
+          { time: '13:30', name: 'Міні-група йоги' },
+          { time: '17:00', name: 'Дитяча йога' },
+          { time: '18:30', name: 'Вечірня йога' },
+        ],
       },
       {
-        name: 'Індивідуально',
-        duration: '60 хв',
-        level: 'За запитом',
-        description: 'Практика під ваше тіло, ваш стан і вашу мету. Часто — після травм чи паузи.',
+        day: 'Вівторок',
+        classes: [
+          { time: '09:00', name: 'Ранкова йога' },
+          { time: '18:00', name: 'Йога для початківців' },
+          { time: '19:30', name: 'Бачата', isNew: true },
+        ],
       },
       {
-        name: 'Face Yoga',
-        duration: '45 хв',
-        level: 'Без підготовки',
-        description: 'Вправи, самомасаж і робота з диханням. Можна групою або наодинці.',
+        day: 'Середа',
+        classes: [
+          { time: '13:30', name: 'Міні-група йоги' },
+          { time: '17:00', name: 'Дитяча йога' },
+          { time: '18:30', name: 'Вечірня йога' },
+        ],
       },
       {
-        name: 'Ретрит',
-        duration: '2–5 днів',
-        level: 'Усі рівні',
-        description: 'Виїзна програма кілька разів на рік. Дати анонсуємо заздалегідь.',
+        day: 'Четвер',
+        classes: [
+          { time: '09:00', name: 'Ранкова йога' },
+          { time: '18:00', name: 'Йога для початківців' },
+          { time: '19:30', name: 'Бачата', isNew: true },
+        ],
+      },
+      {
+        day: 'П’ятниця',
+        classes: [
+          { time: '13:30', name: 'Міні-група йоги' },
+          { time: '17:00', name: 'Дитяча йога' },
+          { time: '18:30', name: 'Йога (різні напрямки)' },
+        ],
+      },
+      {
+        day: 'Субота',
+        classes: [
+          { time: '10:00', name: 'Бачата', isNew: true },
+          { time: '11:00', name: 'Ранкова йога' },
+        ],
       },
     ],
   },
@@ -211,20 +231,19 @@ const uk: SiteContent = {
     title: 'Перша практика',
     body: 'Напишіть нам — підберемо формат, який підійде саме вам. Килимок і все необхідне у студії вже є.',
     primaryLabel: 'Записатися в Instagram',
-    primaryHref: 'https://instagram.com/',
+    primaryHref: 'https://instagram.com/mamaprana.studio.che',
     secondaryLabel: 'Написати в Telegram',
-    secondaryHref: 'https://t.me/',
+    secondaryHref: 'https://t.me/Yoga_FaceYoga_Kinesio',
   },
   footer: {
     tagline: 'Дихай. Рухайся. Повертайся до себе.',
     navTitle: 'Навігація',
     contactTitle: 'Контакти',
-    address: 'Київ, вул. Прикладна, 1',
-    email: 'hello@mamaprana.com.ua',
-    phone: '+380 00 000 0000',
+    address: 'Черкаси, бул. Шевченка 385, БЦ «Депо», 4 поверх, офіс 13',
     social: [
-      { label: 'Instagram', href: 'https://instagram.com/' },
-      { label: 'Telegram', href: 'https://t.me/' },
+      { label: 'Instagram', href: 'https://instagram.com/mamaprana.studio.che' },
+      { label: 'Telegram', href: 'https://t.me/Yoga_FaceYoga_Kinesio' },
+      { label: 'Threads', href: 'https://www.threads.com/@mamaprana.studio.che' },
     ],
     rights: 'Усі права захищено',
   },
@@ -252,7 +271,6 @@ const en: SiteContent = {
   hero: {
     eyebrow: 'Yoga Studio',
     mantra: 'Breathe. Move. Come back to yourself.',
-    scrollHint: 'Scroll',
   },
   philosophy: {
     eyebrow: 'About',
@@ -303,34 +321,56 @@ const en: SiteContent = {
     ],
   },
   schedule: {
-    eyebrow: 'Formats',
-    title: 'Ways to practise',
-    note: 'The current weekly schedule lives on our Instagram. Your first class is always a trial.',
-    cards: [
+    eyebrow: 'Every week',
+    title: 'Schedule',
+    note: 'Booking is required.',
+    days: [
       {
-        name: 'Group practice',
-        duration: '75 min',
-        level: 'All levels',
-        description: 'Up to eight people in the hall. Enough attention for everyone, enough space.',
+        day: 'Monday',
+        classes: [
+          { time: '13:30', name: 'Mini-group yoga' },
+          { time: '17:00', name: 'Kids yoga' },
+          { time: '18:30', name: 'Evening yoga' },
+        ],
       },
       {
-        name: 'One to one',
-        duration: '60 min',
-        level: 'On request',
-        description:
-          'Practice shaped around your body, your state and your goal. Often after injury or a long pause.',
+        day: 'Tuesday',
+        classes: [
+          { time: '09:00', name: 'Morning yoga' },
+          { time: '18:00', name: 'Yoga for beginners' },
+          { time: '19:30', name: 'Bachata', isNew: true },
+        ],
       },
       {
-        name: 'Face Yoga',
-        duration: '45 min',
-        level: 'No experience needed',
-        description: 'Exercises, self-massage and breathwork. In a group or one to one.',
+        day: 'Wednesday',
+        classes: [
+          { time: '13:30', name: 'Mini-group yoga' },
+          { time: '17:00', name: 'Kids yoga' },
+          { time: '18:30', name: 'Evening yoga' },
+        ],
       },
       {
-        name: 'Retreat',
-        duration: '2–5 days',
-        level: 'All levels',
-        description: 'An away programme a few times a year. Dates are announced in advance.',
+        day: 'Thursday',
+        classes: [
+          { time: '09:00', name: 'Morning yoga' },
+          { time: '18:00', name: 'Yoga for beginners' },
+          { time: '19:30', name: 'Bachata', isNew: true },
+        ],
+      },
+      {
+        day: 'Friday',
+        classes: [
+          { time: '13:30', name: 'Mini-group yoga' },
+          { time: '17:00', name: 'Kids yoga' },
+          { time: '18:30', name: 'Yoga (various styles)' },
+        ],
+      },
+      {
+        day: 'Saturday',
+        classes: [
+          { time: '10:00', name: 'Bachata', isNew: true },
+          { time: '11:00', name: 'Morning yoga' },
+        ],
       },
     ],
   },
@@ -339,20 +379,19 @@ const en: SiteContent = {
     title: 'Your first practice',
     body: 'Write to us and we will find the format that suits you. Mats and everything else are already at the studio.',
     primaryLabel: 'Book via Instagram',
-    primaryHref: 'https://instagram.com/',
+    primaryHref: 'https://instagram.com/mamaprana.studio.che',
     secondaryLabel: 'Message on Telegram',
-    secondaryHref: 'https://t.me/',
+    secondaryHref: 'https://t.me/Yoga_FaceYoga_Kinesio',
   },
   footer: {
     tagline: 'Breathe. Move. Come back to yourself.',
     navTitle: 'Navigation',
     contactTitle: 'Contact',
-    address: 'Kyiv, 1 Prykladna St.',
-    email: 'hello@mamaprana.com.ua',
-    phone: '+380 00 000 0000',
+    address: 'Cherkasy, 385 Shevchenka Blvd, Depo Business Centre, 4th floor, office 13',
     social: [
-      { label: 'Instagram', href: 'https://instagram.com/' },
-      { label: 'Telegram', href: 'https://t.me/' },
+      { label: 'Instagram', href: 'https://instagram.com/mamaprana.studio.che' },
+      { label: 'Telegram', href: 'https://t.me/Yoga_FaceYoga_Kinesio' },
+      { label: 'Threads', href: 'https://www.threads.com/@mamaprana.studio.che' },
     ],
     rights: 'All rights reserved',
   },
