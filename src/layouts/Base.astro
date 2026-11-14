@@ -1,12 +1,12 @@
 ---
 import { languages, type Lang } from '@/i18n/content';
-import { localizePath, useContent } from '@/i18n/utils';
+import { localizePath, useContent, withBase } from '@/i18n/utils';
 import '@/styles/global.css';
 
 const { lang, t } = useContent(Astro.currentLocale);
 
 const canonical = new URL(localizePath('/', lang), Astro.site);
-const ogImage = new URL('/og-image.svg', Astro.site);
+const ogImage = new URL(withBase('/og-image.png'), Astro.site);
 
 /** hreflang per locale, x-default to uk */
 const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
@@ -20,14 +20,18 @@ const alternates = (Object.keys(languages) as Lang[]).map((l) => ({
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
     <link rel="canonical" href={canonical.href} />
 
     <title>{t.meta.title}</title>
     <meta name="description" content={t.meta.description} />
 
     {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
-    <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site).href} />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(localizePath('/', 'uk'), Astro.site).href}
+    />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={t.meta.title} />

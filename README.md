@@ -29,16 +29,16 @@ npm run dev      # http://localhost:4321
 
 ## Commands
 
-| Command           | What it does                              |
-| ----------------- | ----------------------------------------- |
-| `npm run dev`     | Dev server with hot reload                |
-| `npm run build`   | Production build into `dist/`             |
-| `npm run preview` | Preview the built `dist/` locally         |
-| `npm run check`   | Type-check `.astro` and `.ts` files       |
-| `npm run lint`    | ESLint (`lint:fix` to autofix)            |
-| `npm run format`  | Prettier (`format:check` to verify)       |
-| `npm run verify`  | Everything above, same as CI              |
-| `npm run fonts`   | Re-download brand fonts to `public/fonts` |
+| Command           | What it does                                  |
+| ----------------- | --------------------------------------------- |
+| `npm run dev`     | Dev server with hot reload                    |
+| `npm run build`   | Production build into `dist/`                 |
+| `npm run preview` | Preview the built `dist/` locally             |
+| `npm run check`   | Type-check `.astro` and `.ts` files           |
+| `npm run lint`    | ESLint (`lint:fix` to autofix)                |
+| `npm run format`  | Prettier (`format:check` to verify)           |
+| `npm run verify`  | Everything above, same as CI                  |
+| `npm run fonts`   | Re-download brand fonts to `src/assets/fonts` |
 
 ## Structure
 
