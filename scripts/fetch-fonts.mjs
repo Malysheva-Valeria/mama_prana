@@ -15,12 +15,10 @@ const UA =
 const WANTED_SUBSETS = new Set(['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext']);
 
 const FAMILIES = [
-  // Headings
-  { name: 'Cormorant Garamond', slug: 'cormorant', query: 'ital,wght@0,300;0,400;0,500;1,400' },
-  // Body
-  { name: 'EB Garamond', slug: 'ebgaramond', query: 'ital,wght@0,400;1,400' },
-  // Labels
-  { name: 'Montserrat', slug: 'montserrat', query: 'wght@300;400' },
+  // Headings and short paragraphs
+  { name: 'Lora', slug: 'lora', query: 'ital,wght@0,400;1,400' },
+  // Body copy and caps labels
+  { name: 'Inter', slug: 'inter', query: 'wght@400;500' },
 ];
 
 async function fetchCss(family) {

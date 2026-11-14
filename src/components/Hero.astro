@@ -8,7 +8,7 @@ const { t } = useContent(Astro.currentLocale);
 const phrases = t.hero.mantra.split(/(?<=\.)\s+/).filter(Boolean);
 ---
 
-<section id="top" class="hero" data-theme="blue">
+<section id="top" class="hero" data-theme="green">
   <div class="hero__glow" aria-hidden="true"></div>
 
   <div class="container hero__inner hero-fade">
@@ -52,7 +52,7 @@ const phrases = t.hero.mantra.split(/(?<=\.)\s+/).filter(Boolean);
     translate: -50% -50%;
     background: radial-gradient(
       circle,
-      color-mix(in srgb, var(--c-terracotta) 26%, transparent) 0%,
+      color-mix(in srgb, var(--c-orange) 26%, transparent) 0%,
       transparent 62%
     );
     pointer-events: none;
@@ -81,12 +81,12 @@ const phrases = t.hero.mantra.split(/(?<=\.)\s+/).filter(Boolean);
   }
 
   .hero__eyebrow {
-    color: var(--c-muted-blue);
+    color: var(--c-sand);
   }
 
   .hero__mantra {
     font-size: var(--step-2);
-    font-weight: 300;
+    font-weight: 400;
     font-style: italic;
     max-width: 22ch;
     color: var(--fg-soft);

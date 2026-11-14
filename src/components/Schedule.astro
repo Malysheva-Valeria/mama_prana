@@ -5,7 +5,7 @@ import { useContent } from '@/i18n/utils';
 const { t } = useContent(Astro.currentLocale);
 ---
 
-<Section id="schedule" theme="blue" labelledby="schedule-title">
+<Section id="schedule" theme="green" labelledby="schedule-title">
   <header class="schedule__header">
     <p class="eyebrow" data-anim="rise" style="--i: 0">{t.schedule.eyebrow}</p>
     <h2 id="schedule-title" class="schedule__title">
@@ -45,7 +45,7 @@ const { t } = useContent(Astro.currentLocale);
 
   .schedule__title {
     font-size: var(--step-3);
-    font-weight: 300;
+    font-weight: 400;
   }
 
   .line {
@@ -118,14 +118,14 @@ const { t } = useContent(Astro.currentLocale);
 
   .class__name {
     font-size: var(--step-1);
-    font-weight: 300;
+    font-weight: 400;
   }
 
   .class__new {
     padding: 0.1em 0.7em;
     border-radius: 999px;
     background: var(--accent);
-    color: var(--c-cream-warm);
+    color: var(--c-beige-light);
     font-family: var(--font-label);
     font-size: var(--step--1);
     letter-spacing: 0.08em;
