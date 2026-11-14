@@ -7,7 +7,7 @@ interface Props {
   withWordmark?: boolean;
   /** Draw the outline on reveal */
   draw?: boolean;
-  /** Sun rises once, then rays spin */
+  /** Sun rises on each entry, then the rays fade in */
   sunrise?: boolean;
   class?: string;
 }
@@ -22,8 +22,6 @@ const {
 
 // Sunrise rays, symmetric from the horizon
 const rays = [0, 30, 60, 90, 120, 150, 180];
-// Full ring of rays for spinning; clipPath hides those below the horizon
-const spinRays = Array.from({ length: 12 }, (_, i) => i * 30);
 
 const ray = (deg: number) => {
   const rad = (deg * Math.PI) / 180;
@@ -85,7 +83,7 @@ const ray = (deg: number) => {
             <g class="logo__sun" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
               <path d="M 33 68 A 17 17 0 0 1 67 68" />
               <g class="logo__rays">
-                {spinRays.map((deg) => (
+                {rays.map((deg) => (
                   <line {...ray(deg)} />
                 ))}
               </g>

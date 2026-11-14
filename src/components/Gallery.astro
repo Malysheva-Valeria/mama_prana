@@ -25,16 +25,12 @@ const photos = [hall, arches, morning, lounge, details, evening];
   <div class="gallery">
     {
       t.gallery.captions.map((caption, index) => (
-        <div
-          class="gallery__cell parallax"
-          style={`--parallax-from: ${index % 2 ? '4.5rem' : '1.5rem'}; --parallax-to: ${index % 2 ? '-4.5rem' : '-1.5rem'}`}
-        >
+        <div class="gallery__cell">
           <Photo
             src={photos[index]}
             alt={caption}
             caption={caption}
-            caption={caption}
-            ratio={index % 3 === 0 ? '4 / 5' : '1 / 1'}
+            ratio="4 / 5"
             tone={((index % 3) + 1) as 1 | 2 | 3}
             anim="fade"
             index={index % 3}
@@ -73,16 +69,5 @@ const photos = [hall, arches, morning, lounge, details, evening];
     grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
     gap: var(--space-md);
     align-items: start;
-  }
-
-  /* Slight vertical offset so the strip does not march in a row */
-  @media (min-width: 52rem) {
-    .gallery__cell:nth-child(even) {
-      margin-top: var(--space-lg);
-    }
-
-    .gallery__cell:nth-child(3n) {
-      margin-top: calc(var(--space-lg) * 1.6);
-    }
   }
 </style>

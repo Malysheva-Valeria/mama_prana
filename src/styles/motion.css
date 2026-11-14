@@ -28,11 +28,14 @@
   display: block;
   overflow: hidden;
   opacity: 1; /* hide the content, not the window */
+  /* Room for descenders (g, y, р, у) under tight leading; layout unchanged */
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
 }
 
 .js [data-anim='mask'] > * {
   display: block;
-  transform: translateY(105%);
+  transform: translateY(calc(100% + 0.3em));
   transition: transform var(--dur-xslow) var(--ease-drift) var(--anim-delay);
   will-change: transform;
 }
@@ -95,7 +98,7 @@
   }
 }
 
-/* `sunrise`: sun rises on each viewport entry (`.is-rising`, see Base.astro), then rays spin */
+/* `sunrise`: sun rises on each viewport entry (`.is-rising`, see Base.astro), then rays fade in */
 .js .logo--sunrise .logo__sun {
   opacity: 0;
   transform: translateY(24px);
@@ -105,12 +108,12 @@
   animation: sun-rise 1.8s var(--ease-drift) var(--rise-delay, 1.5s) forwards;
 }
 
-.logo__rays {
-  transform-origin: 50px 68px;
+.js .logo--sunrise .logo__rays {
+  opacity: 0;
 }
 
 .js .logo--sunrise.is-rising .logo__rays {
-  animation: sun-spin 30s linear infinite;
+  animation: rays-in 1.2s var(--ease-out) calc(var(--rise-delay, 1.5s) + 1.2s) forwards;
 }
 
 @keyframes sun-rise {
@@ -124,9 +127,9 @@
   }
 }
 
-@keyframes sun-spin {
+@keyframes rays-in {
   to {
-    transform: rotate(360deg);
+    opacity: 1;
   }
 }
 
@@ -207,7 +210,9 @@
     animation: none;
   }
 
+  .js .logo--sunrise .logo__rays,
   .js .logo--sunrise.is-rising .logo__rays {
+    opacity: 1;
     animation: none;
   }
 }
